@@ -1,0 +1,376 @@
+3x3
+4
+true
+true
+A
+	a
+		shape:diamond
+		size:very small
+		fill:yes
+B
+	b
+		shape:diamond
+		size:very small
+		fill:yes
+		above:c
+		left-of:c
+	c
+		shape:diamond
+		size:very small
+		fill:yes
+C
+	d
+		shape:diamond
+		size:very small
+		fill:yes
+		above:e,f
+		left-of:e,f
+	e
+		shape:diamond
+		size:very small
+		fill:yes
+		above:f
+		left-of:f
+	f
+		shape:diamond
+		size:very small
+		fill:yes
+D
+	g
+		shape:diamond
+		size:very small
+		fill:yes
+		above:h
+	h
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:g
+E
+	i
+		shape:diamond
+		size:very small
+		fill:yes
+		above:j,k,l
+		left-of:j
+	j
+		shape:diamond
+		size:very small
+		fill:yes
+		above:l
+	k
+		shape:diamond
+		size:very small
+		fill:yes
+		above:l
+		left-of:i,j,l
+	l
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:j
+F
+	m
+		shape:diamond
+		size:very small
+		fill:yes
+		above:n,o,p,q,r
+		left-of:n,o,r
+	n
+		shape:diamond
+		size:very small
+		fill:yes
+		above:o,q,r
+		left-of:o
+	o
+		shape:diamond
+		size:very small
+		fill:yes
+		above:r
+	p
+		shape:diamond
+		size:very small
+		fill:yes
+		above:o,q,r
+		left-of:m,n,o,q,r
+	q
+		shape:diamond
+		size:very small
+		fill:yes
+		above:r
+		left-of:n,o,r
+	r
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:o
+G
+	s
+		shape:diamond
+		size:very small
+		fill:yes
+		above:t,u
+	t
+		shape:diamond
+		size:very small
+		fill:yes
+		above:u
+		left-of:s
+	u
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:s,t
+H
+	v
+		shape:diamond
+		size:very small
+		fill:yes
+		above:w,x,y,z,1
+		left-of:w
+	w
+		shape:diamond
+		size:very small
+		fill:yes
+		above:y,z,1
+	x
+		shape:diamond
+		size:very small
+		fill:yes
+		above:y,z,1
+		left-of:v,w,y
+	y
+		shape:diamond
+		size:very small
+		fill:yes
+		above:1
+		left-of:w
+	z
+		shape:diamond
+		size:very small
+		fill:yes
+		above:1
+		left-of:v,w,x,y,1
+	1
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:v,w,y
+1
+	2
+		shape:diamond
+		size:very small
+		fill:yes
+		above:3,4,5
+		left-of:3
+	3
+		shape:diamond
+		size:very small
+		fill:yes
+		above:5
+	4
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:2,3,5
+		above:5
+	5
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:3
+2
+	6
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:7,8,11
+		above:7,8,9,10,11
+	7
+		shape:diamond
+		size:very small
+		fill:yes
+		above:8,10,11
+		left-of:8
+	8
+		shape:diamond
+		size:very small
+		fill:yes
+		above:11
+	9
+		shape:diamond
+		size:very small
+		fill:yes
+		above:8,10,11
+		left-of:6,7,8,10,11
+	10
+		shape:diamond
+		size:very small
+		fill:yes
+		above:11
+		left-of:7,8,11
+	11
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:8
+3
+	12
+		shape:diamond
+		size:very small
+		fill:yes
+		above:14,15
+		left-of:13,15
+	13
+		shape:diamond
+		size:very small
+		fill:yes
+		above:14,15
+	14
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:15
+	15
+		shape:diamond
+		size:very small
+		fill:yes
+4
+	16
+		shape:diamond
+		size:very small
+		fill:yes
+		above:17,18,19,20,21,22,23,24
+		left-of:18,19,22
+	17
+		shape:diamond
+		size:very small
+		fill:yes
+		above:18,20,21,22,23,24
+		left-of:18
+	18
+		shape:diamond
+		size:very small
+		fill:yes
+		above:21,23,24
+	19
+		shape:diamond
+		size:very small
+		fill:yes
+		above:18,20,21,22,23,24
+		left-of:16,17,18,20,21,24
+	20
+		shape:diamond
+		size:very small
+		fill:yes
+		above:21,23,24
+		left-of:18,19,22
+	21
+		shape:diamond
+		size:very small
+		fill:yes
+		above:24
+		left-of:18
+	22
+		shape:diamond
+		size:very small
+		fill:yes
+		above:21,23,24
+		left-of:16,17,18,19,20,21,23,24
+	23
+		shape:diamond
+		size:very small
+		fill:yes
+		above:24
+		left-of:16,17,18,20,21,24
+	24
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:18,19,22
+5
+	25
+		shape:diamond
+		size:very small
+		fill:yes
+6
+	26
+		shape:square
+		size:very small
+		fill:yes
+		above:27,28,29,30,31,32,33,34
+		left-of:28,29,32
+	27
+		shape:square
+		size:very small
+		fill:yes
+		above:28,30,31,32,33,34
+		left-of:28
+	28
+		shape:square
+		size:very small
+		fill:yes
+		above:31,33,34
+	29
+		shape:square
+		size:very small
+		fill:yes
+		above:28,30,31,32,33,34
+		left-of:26,27,28,30,31,34
+	30
+		shape:square
+		size:very small
+		fill:yes
+		above:31,33,34
+		left-of:28,29,32
+	31
+		shape:square
+		size:very small
+		fill:yes
+		above:34
+		left-of:28
+	32
+		shape:square
+		size:very small
+		fill:yes
+		above:31,33,34
+		left-of:26,27,28,29,30,31,33,34
+	33
+		shape:square
+		size:very small
+		fill:yes
+		above:34
+		left-of:26,27,28,30,31,34
+	34
+		shape:square
+		size:very small
+		fill:yes
+		left-of:28,29,32
+7
+	35
+		shape:diamond
+		size:very small
+		fill:yes
+		above:36,37,38
+		left-of:36
+	36
+		shape:diamond
+		size:very small
+		fill:yes
+		above:38
+	37
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:35,36,38
+		above:38
+	38
+		shape:diamond
+		size:very small
+		fill:yes
+		left-of:36
+8
+	39
+		shape:square
+		size:very small
+		fill:yes

@@ -1,0 +1,58 @@
+2x2
+1
+true
+true
+A
+	a
+		shape:right triangle
+		fill:yes
+		angle:270
+		size:very large
+B
+	b
+		shape:right triangle
+		fill:yes
+		angle:0
+		size:very large
+C
+	c
+		shape:right triangle
+		fill:yes
+		angle:270
+		size:very large
+1
+	d
+		shape:right triangle
+		fill:yes
+		angle:0
+		size:very large
+2
+	e
+		shape:right triangle
+		fill:yes
+		angle:270
+		size:very large
+3
+	f
+		shape:pac-man
+		fill:yes
+		angle:180
+		size:very large
+4
+	g
+		shape:right triangle
+		fill:no
+		angle:0
+		size:very large
+5
+	h
+		shape:pac-man
+		fill:yes
+		angle:0
+		size:very large
+6
+	i
+		shape:right triangle
+		fill:no
+		angle:270
+		size:very large

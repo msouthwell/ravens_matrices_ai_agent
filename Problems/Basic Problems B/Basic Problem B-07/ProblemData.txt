@@ -1,0 +1,58 @@
+2x2
+6
+true
+true
+A
+	a
+		shape:pac-man
+		fill:yes
+		angle:45
+		size:very large
+B
+	b
+		shape:pac-man
+		fill:yes
+		angle:135
+		size:very large
+C
+	c
+		shape:pac-man
+		fill:no
+		angle:315
+		size:very large
+1
+	d
+		shape:pac-man
+		fill:yes
+		angle:45
+		size:very large
+2
+	e
+		shape:pac-man
+		fill:yes
+		angle:135
+		size:very large
+3
+	f
+		shape:pac-man
+		fill:yes
+		angle:225
+		size:very large
+4
+	g
+		shape:pac-man
+		fill:no
+		angle:315
+		size:very large
+5
+	h
+		shape:pac-man
+		fill:no
+		angle:135
+		size:very large
+6
+	i
+		shape:pac-man
+		fill:no
+		angle:225
+		size:very large

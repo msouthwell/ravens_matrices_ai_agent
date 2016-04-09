@@ -1,0 +1,49 @@
+2x2
+2
+true
+true
+A
+	a
+		shape:square
+		fill:yes
+		size:very large
+B
+	b
+		shape:square
+		fill:yes
+		size:very large
+C
+	c
+		shape:square
+		fill:yes
+		size:very large
+1
+	d
+		shape:pentagon
+		fill:yes
+		size:very large
+2
+	e
+		shape:square
+		fill:yes
+		size:very large
+3
+	f
+		shape:triangle
+		fill:yes
+		size:very large
+4
+	g
+		shape:pac-man
+		fill:yes
+		size:very large
+5
+	h
+		shape:star
+		fill:yes
+		size:very large
+6
+	i
+		shape:heart
+		fill:yes
+		size:very large

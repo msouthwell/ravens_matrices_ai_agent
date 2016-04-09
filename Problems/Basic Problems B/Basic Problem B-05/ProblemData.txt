@@ -1,0 +1,63 @@
+2x2
+4
+true
+true
+A
+	a
+		shape:right triangle
+		size:very large
+		fill:yes
+		angle:270
+		alignment:bottom-right
+B
+	b
+		shape:square
+		size:very large
+		fill:yes
+		alignment:bottom-left
+C
+	c
+		shape:right triangle
+		size:very large
+		angle:180
+		fill:yes
+		alignment:top-right
+1
+	d
+		shape:right triangle
+		size:very large
+		angle:270
+		fill:yes
+		alignment:bottom-left
+2
+	e
+		shape:square
+		size:very large
+		fill:yes
+		alignment:bottom-left
+3
+	f
+		shape:right triangle
+		size:very large
+		angle:270
+		fill:yes
+		alignment:bottom-right
+4
+	g
+		shape:square
+		size:very large
+		fill:yes
+		alignment:top-left
+5
+	h
+		shape:right triangle
+		size:very large
+		angle:90
+		fill:yes
+		alignment:top-left
+6
+	i
+		shape:square
+		size:very large
+		fill:yes
+		alignment:top-right

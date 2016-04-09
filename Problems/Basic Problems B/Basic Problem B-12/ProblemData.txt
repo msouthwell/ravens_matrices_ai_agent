@@ -1,0 +1,144 @@
+2x2
+1
+true
+true
+A
+	a
+		shape:circle
+		size:huge
+		fill:no
+	b
+		shape:circle
+		size:very large
+		fill:no
+		inside:a
+	c
+		shape:circle
+		size:large
+		fill:no
+		inside:a,b
+	d
+		shape:circle
+		size:medium
+		fill:no
+		inside:a,b,c
+	e
+		shape:circle
+		size:small
+		fill:no
+		inside:a,b,c,d
+B
+	f
+		shape:circle
+		size:large
+		fill:no
+	g
+		shape:circle
+		size:medium
+		fill:no
+		inside:f
+	h
+		shape:circle
+		size:small
+		fill:no
+		inside:f,g
+C
+	i
+		shape:circle
+		size:huge
+		fill:no
+	j
+		shape:circle
+		size:very large
+		fill:no
+		inside:i
+	k
+		shape:circle
+		size:large
+		fill:no
+		inside:i,j
+1
+	l
+		shape:circle
+		size:large
+		fill:no
+2
+	m
+		shape:circle
+		size:huge
+		fill:no
+	n
+		shape:circle
+		size:very large
+		fill:no
+		inside:m
+	o
+		shape:circle
+		size:large
+		fill:no
+		inside:m,n
+3
+	p
+		shape:circle
+		size:large
+		fill:no
+	q
+		shape:circle
+		size:medium
+		fill:no
+		inside:p
+	r
+		shape:circle
+		size:small
+		fill:no
+		inside:p,q
+4
+	s
+		shape:circle
+		size:huge
+		fill:no
+	t
+		shape:circle
+		size:large
+		fill:no
+		inside:s
+	u
+		shape:circle
+		size:small
+		fill:no
+		inside:s,t
+5
+	v
+		shape:circle
+		size:very large
+		fill:no
+	w
+		shape:circle
+		size:medium
+		fill:no
+		inside:v
+6
+	x
+		shape:circle
+		size:huge
+		fill:no
+	y
+		shape:circle
+		size:very large
+		fill:no
+		inside:x
+	z
+		shape:circle
+		size:large
+		fill:no
+		inside:x,y
+	1
+		shape:circle
+		size:medium
+		fill:no
+		inside:x,y,z
+	2
+		shape:circle
+		size:small
+		fill:no
+		inside:x,y,z,1

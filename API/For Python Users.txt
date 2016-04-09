@@ -1,0 +1,9 @@
+For Python  Users:
+
+The Java and Python code are nearly identical, and thus, we have simply included the documentation for the Java code. The only changes should be the only pertinent differences between the Java and Python code:
+
+- Instead of getter and setter methods, the Python code is built around accessing these variables directly. In RavensProblem.py, for instance, instead of accessing RavensProblem.getFigures(), RavensProblem.getName(), RavensProblem.getProblemType(), RavensProblem.hasVerbal(), and RavensProblem.hasVisual(), you'll simply access RavensProblem.figures, RavensProblem.name, RavensProblem.problemType, RavensProblem.hasVisual, and RavensProblem.hasVerbal.
+
+- Because Python does not support private methods, your agent will technically have access to the variables givenAnswer and correctAnswer, as well as the method setAnswerReceived. You should not access any of these directly: their names will be changed when we test your code to ensure your agent isn't accessing correctAnswer before supplying an answer or changing its answer after accessing correctAnswer.
+
+- Where Java uses HashMaps, Python uses Dictionaries. The same keys are used between both.

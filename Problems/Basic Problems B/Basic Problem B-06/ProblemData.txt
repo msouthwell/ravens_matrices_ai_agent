@@ -1,0 +1,105 @@
+2x2
+5
+true
+true
+A
+	a
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:90
+		above:b
+	b
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:270
+B
+	c
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:90
+		above:d
+	d
+		shape:right triangle
+		fill:yes
+		size:huge
+		angle:270
+C
+	e
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:180
+		above:f
+	f
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:0
+1
+	g
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:90
+		above:h
+	h
+		shape:right triangle
+		fill:yes
+		size:huge
+		angle:270
+2
+	i
+		shape:right triangle
+		fill:yes
+		size:huge
+		angle:90
+		above:j
+	j
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:270
+3
+	k
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:90
+		above:l
+	l
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:270
+4
+	m
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:180
+		above:n
+	n
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:0
+5
+	o
+		shape:right triangle
+		fill:no
+		size:huge
+		angle:180
+		above:p
+	p
+		shape:right triangle
+		fill:yes
+		size:huge
+		angle:0
+6
+	q
+		shape:square
+		fill:yes
+		size:huge

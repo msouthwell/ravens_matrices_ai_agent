@@ -1,0 +1,179 @@
+3x3
+3
+true
+true
+A
+	a
+		shape:square
+		size:small
+		fill:no
+B
+	b
+		shape:square
+		size:small
+		fill:no
+C
+	c
+		shape:square
+		size:small
+		fill:no
+D
+	d
+		shape:square
+		size:large
+		fill:no
+	e
+		shape:square
+		size:small
+		fill:no
+		inside:d
+E
+	f
+		shape:square
+		size:large
+		fill:no
+	g
+		shape:square
+		size:small
+		fill:no
+		inside:f
+F
+	h
+		shape:square
+		size:large
+		fill:no
+	i
+		shape:square
+		size:small
+		fill:no
+		inside:h
+G
+	j
+		shape:square
+		size:huge
+		fill:no
+	k
+		shape:square
+		size:large
+		fill:no
+		inside:j
+	l
+		shape:square
+		size:small
+		fill:no
+		inside:j,k
+H
+	m
+		shape:square
+		size:huge
+		fill:no
+	n
+		shape:square
+		size:large
+		fill:no
+		inside:m
+	o
+		shape:square
+		size:small
+		fill:no
+		inside:m,n
+1
+	p
+		shape:square
+		size:huge
+		fill:no
+	q
+		shape:square
+		size:very large
+		fill:no
+		inside:p
+	r
+		shape:square
+		size:large
+		fill:no
+		inside:p,q
+2
+	s
+		shape:square
+		size:huge
+		fill:no
+	t
+		shape:square
+		size:very large
+		fill:no
+		inside:s
+	u
+		shape:square
+		size:large
+		fill:no
+		inside:s,t
+	v
+		shape:square
+		size:medium
+		fill:no
+		inside:s,t,u
+	w
+		shape:square
+		size:small
+		fill:no
+		inside:s,t,u,v
+3
+	x
+		shape:square
+		size:huge
+		fill:no
+	y
+		shape:square
+		size:large
+		fill:no
+		inside:x
+	z
+		shape:square
+		size:small
+		fill:no
+		inside:x,y
+4
+	1
+		shape:square
+		size:small
+		fill:no
+5
+	2
+		shape:octagon
+		size:huge
+		fill:no
+	3
+		shape:octagon
+		size:large
+		fill:no
+		inside:2
+	4
+		shape:octagon
+		size:small
+		fill:no
+		inside:2,3
+6
+	5
+		shape:square
+		size:huge
+		fill:no
+7
+	6
+		shape:square
+		size:large
+		fill:no
+8
+	7
+		shape:circle
+		size:huge
+		fill:no
+	8
+		shape:circle
+		size:large
+		fill:no
+		inside:7
+	9
+		shape:circle
+		size:small
+		fill:no
+		inside:7,8

@@ -1,0 +1,4 @@
+2x2
+6
+true
+false

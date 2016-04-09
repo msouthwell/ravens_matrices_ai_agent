@@ -1,0 +1,49 @@
+2x2
+5
+true
+true
+A
+	a
+		shape:octagon
+		fill:no
+		size:very large
+B
+	b
+		shape:octagon
+		fill:yes
+		size:very large
+C
+	c
+		shape:square
+		fill:no
+		size:very large
+1
+	d
+		shape:octagon
+		fill:yes
+		size:very large
+2
+	e
+		shape:octagon
+		fill:no
+		size:very large
+3
+	f
+		shape:square
+		fill:no
+		size:very large
+4
+	g
+		shape:diamond
+		fill:yes
+		size:very large
+5
+	h
+		shape:square
+		fill:yes
+		size:very large
+6
+	i
+		shape:diamond
+		fill:no
+		size:very large

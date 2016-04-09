@@ -1,0 +1,84 @@
+2x2
+1
+true
+true
+A
+	a
+		shape:heart
+		size:very large
+		fill:no
+	b
+		shape:diamond
+		size:very small
+		fill:yes
+		inside:a
+B
+	c
+		shape:heart
+		size:very large
+		fill:no
+C
+	e
+		shape:octagon
+		size:very large
+		fill:no
+	f
+		shape:diamond
+		size:very small
+		fill:yes
+		inside:e
+1
+	g
+		shape:octagon
+		size:very large
+		fill:no
+2
+	i
+		shape:octagon
+		size:very large
+		fill:no
+	j
+		shape:diamond
+		size:very small
+		fill:yes
+		inside:i
+3
+	k
+		shape:heart
+		size:very large
+		fill:no
+		overlaps:l
+	l
+		shape:octagon
+		size:very large
+		fill:no
+4
+	m
+		shape:heart
+		size:very large
+		fill:no
+		overlaps:r
+	n
+		shape:diamond
+		size:very small
+		fill:yes
+		inside:m,r
+	r
+		shape:octagon
+		size:very large
+		fill:no
+5
+	o
+		shape:heart
+		size:very large
+		fill:no
+	p
+		shape:diamond
+		size:very small
+		fill:yes
+		inside:o
+6
+	q
+		shape:heart
+		size:very large
+		fill:no

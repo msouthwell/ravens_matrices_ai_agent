@@ -1,0 +1,95 @@
+3x3
+7
+true
+true
+A
+	a
+		shape:square
+		size:small
+		fill:yes
+B
+	b
+		shape:rectangle
+		width:large
+		height:small
+		fill:yes
+C
+	c
+		shape:rectangle
+		width:huge
+		height:small
+		fill:yes
+D
+	d
+		shape:rectangle
+		width:small
+		height:large
+		fill:yes
+E
+	e
+		shape:square
+		size:large
+		fill:yes
+F
+	f
+		shape:rectangle
+		width:huge
+		height:large
+		fill:yes
+G
+	g
+		shape:rectangle
+		width:small
+		height:huge
+		fill:yes
+H
+	h
+		shape:rectangle
+		width:large
+		height:huge
+		fill:yes
+1
+	i
+		shape:rectangle
+		width:huge
+		height:large
+		fill:yes
+2
+	j
+		shape:rectangle
+		width:huge
+		height:small
+		fill:yes
+3
+	k
+		shape:rectangle
+		width:small
+		height:huge
+		fill:yes
+4
+	l
+		shape:square
+		size:small
+		fill:yes
+5
+	m
+		shape:rectangle
+		width:small
+		height:large
+		fill:yes
+6
+	n
+		shape:square
+		size:large
+		fill:yes
+7
+	o
+		shape:square
+		size:huge
+		fill:yes
+8
+	p
+		shape:rectangle
+		width:large
+		height:huge
+		fill:yes

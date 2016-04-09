@@ -1,0 +1,180 @@
+3x3
+2
+true
+true
+A
+	a
+		shape:triangle
+		size:medium
+		fill:no
+		angle:90
+		left-of:b
+	b
+		shape:triangle
+		size:medium
+		fill:no
+		angle:270
+B
+	c
+		shape:triangle
+		size:medium
+		fill:no
+		angle:90
+		overlaps:d
+	d
+		shape:triangle
+		size:medium
+		fill:no
+		angle:270
+C
+	e
+		shape:triangle
+		size:medium
+		fill:no
+		angle:270
+		left-of:f
+	f
+		shape:triangle
+		size:medium
+		fill:no
+		angle:90
+D
+	g
+		shape:right triangle
+		size:medium
+		fill:no
+		angle:90
+		left-of:h
+	h
+		shape:right triangle
+		size:medium
+		fill:no
+		angle:180
+E
+	i
+		shape:right triangle
+		size:medium
+		fill:no
+		angle:90
+		overlaps:j
+	j
+		shape:right triangle
+		size:medium
+		fill:no
+		angle:180
+F
+	k
+		shape:right triangle
+		size:medium
+		fill:no
+		angle:180
+		left-of:l
+	l
+		shape:right triangle
+		size:medium
+		fill:no
+		angle:90
+G
+	m
+		shape:star
+		size:medium
+		fill:no
+		angle:90
+		left-of:n
+	n
+		shape:star
+		size:medium
+		fill:no
+		angle:270
+H
+	o
+		shape:star
+		size:medium
+		fill:no
+		angle:90
+		overlaps:p
+	p
+		shape:star
+		size:medium
+		fill:no
+		angle:270
+1
+	q
+		shape:star
+		size:medium
+		fill:no
+		angle:90	
+2
+	r
+		shape:star
+		size:medium
+		fill:no
+		angle:270
+		left-of:s
+	s
+		shape:star
+		size:medium
+		fill:no
+		angle:90
+3
+	t
+		shape:star
+		size:medium
+		fill:no
+		angle:90
+		left-of:u
+	u
+		shape:star
+		size:medium
+		fill:no
+		angle:270
+4
+	v
+		shape:circle
+		size:medium
+		fill:no
+		left-of:w
+	w
+		shape:circle
+		size:medium
+		fill:no
+5
+	x
+		shape:star
+		size:medium
+		fill:no
+		angle:0
+6
+	y
+		shape:right triangle
+		size:medium
+		fill:no
+		angle:180
+		left-of:z
+	z
+		shape:right triangle
+		size:medium
+		fill:no
+		angle:90
+7
+	1
+		shape:square
+		size:medium
+		fill:no
+		left-of:2
+	2
+		shape:square
+		size:medium
+		fill:no
+8
+	3
+		shape:star
+		size:medium
+		fill:no
+		angle:0
+		left-of:4
+	4
+		shape:star
+		size:medium
+		fill:no
+		angle:0

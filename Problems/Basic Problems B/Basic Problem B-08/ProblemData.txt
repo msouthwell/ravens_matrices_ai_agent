@@ -1,0 +1,49 @@
+2x2
+6
+true
+true
+A
+	a
+		shape:circle
+		size:huge
+		fill:right-half
+B
+	b
+		shape:square
+		size:huge
+		fill:right-half
+C
+	c
+		shape:circle
+		size:huge
+		fill:right-half
+1
+	d
+		shape:circle
+		size:huge
+		fill:left-half
+2
+	e
+		shape:square
+		size:huge
+		fill:left-half
+3
+	f
+		shape:circle
+		size:huge
+		fill:right-half
+4
+	g
+		shape:circle
+		size:huge
+		fill:top-half
+5
+	h
+		shape:square
+		size:huge
+		fill:bottom-half
+6
+	i
+		shape:square
+		size:huge
+		fill:right-half

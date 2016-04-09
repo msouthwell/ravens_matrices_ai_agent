@@ -1,0 +1,101 @@
+2x2
+5
+true
+true
+A
+	a
+		shape:circle
+		size:very large
+		fill:no
+	b
+		shape:plus
+		size:small
+		fill:yes
+		angle:0
+		inside:a
+B
+	c
+		shape:circle
+		size:very large
+		fill:no
+	d
+		shape:plus
+		size:small
+		fill:yes
+		angle:0
+		inside:c
+C
+	e
+		shape:circle
+		size:very large
+		fill:no
+	f
+		shape:plus
+		size:small
+		fill:yes
+		angle:0
+		inside:e
+1
+	g
+		shape:square
+		size:very large
+		fill:no
+	h
+		shape:plus
+		size:small
+		fill:yes
+		angle:45
+		inside:g
+2
+	i
+		shape:circle
+		size:very large
+		fill:no
+	j
+		shape:plus
+		size:small
+		fill:yes
+		angle:45
+		inside:i
+3
+	k
+		shape:circle
+		size:very large
+		fill:no
+	l
+		shape:circle
+		size:small
+		fill:yes
+		inside:k
+4
+	m
+		shape:square
+		size:very large
+		fill:no
+	n
+		shape:plus
+		size:small
+		fill:yes
+		angle:0
+		inside:m
+5
+	o
+		shape:circle
+		size:very large
+		fill:no
+	p
+		shape:plus
+		size:small
+		fill:yes
+		angle:0
+		inside:o
+6
+	q
+		shape:square
+		size:very large
+		fill:no
+	f
+		shape:circle
+		size:small
+		fill:yes
+		inside:q

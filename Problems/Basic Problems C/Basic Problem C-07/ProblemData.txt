@@ -1,0 +1,217 @@
+3x3
+2
+true
+true
+A
+	a
+		shape:diamond
+		fill:yes
+		size:small
+	b
+		shape:circle
+		fill:yes
+		size:small
+		above:a
+		left-of:a
+B
+	c
+		shape:diamond
+		fill:yes
+		size:small
+	d
+		shape:circle
+		fill:yes
+		size:small
+		above:c
+C
+	e
+		shape:diamond
+		fill:yes
+		size:small
+		left-of:f
+	f
+		shape:circle
+		fill:yes
+		size:small
+		above:e
+D
+	g
+		shape:diamond
+		fill:yes
+		size:small
+	h
+		shape:circle
+		fill:yes
+		size:small
+		left-of:g
+E
+	i
+		shape:circle
+		fill:yes
+		size:small
+F
+	j
+		shape:diamond
+		fill:yes
+		size:small
+		left-of:k
+	k
+		shape:circle
+		fill:yes
+		size:small
+G
+	l
+		shape:diamond
+		fill:yes
+		size:small
+		above:m
+	m
+		shape:circle
+		fill:yes
+		size:small
+		left-of:l
+H
+	n
+		shape:diamond
+		fill:yes
+		size:small
+		above:o
+	o
+		shape:circle
+		fill:yes
+		size:small
+1
+	p
+		shape:diamond
+		fill:yes
+		size:small
+	q
+		shape:circle
+		fill:yes
+		size:small
+		above:p
+		left-of:p
+2
+	r
+		shape:diamond
+		fill:yes
+		size:small
+		above:s
+		left-of:s
+	s
+		shape:circle
+		fill:yes
+		size:small
+3
+	t
+		shape:diamond
+		fill:yes
+		size:small
+		above:v
+		left-of:v
+	u
+		shape:circle
+		fill:yes
+		size:small
+		above:t,v
+		left-of:t,v
+	v
+		shape:circle
+		fill:yes
+		size:small
+4
+	w
+		shape:diamond
+		fill:yes
+		size:small
+		above:x
+		left-of:y
+	x
+		shape:circle
+		fill:yes
+		size:small
+		left-of:w,y
+	y
+		shape:circle
+		fill:yes
+		size:small
+		above:w,x
+5
+	1
+		shape:circle
+		fill:yes
+		size:small
+		above:4,z,5,6,7,8
+		left-of:2,3,z,5,7,8
+	2
+		shape:circle
+		fill:yes
+		size:small
+		above:4,z,5,6,7,8
+		left-of:3,5,8
+	3
+		shape:circle
+		fill:yes
+		size:small
+		above:4,z,5,6,7,8
+	4
+		shape:circle
+		fill:yes
+		size:small
+		above:6,7,8
+		left-of:2,3,z,5,7,8
+	z
+		shape:diamond
+		fill:yes
+		size:small
+		above:6,7,8
+		left-of:3,5,8
+	5
+		shape:circle
+		fill:yes
+		size:small
+		above:6,7,8
+	6
+		shape:circle
+		fill:yes
+		size:small
+		left-of:2,3,z,5,7,8
+	7
+		shape:circle
+		fill:yes
+		size:small
+		left-of:3,5,8
+	8
+		shape:circle
+		fill:yes
+		size:small
+6
+	9
+		shape:diamond
+		fill:yes
+		size:small
+	10
+		shape:circle
+		fill:yes
+		size:small
+		left-of:9
+7
+	11
+		shape:diamond
+		fill:yes
+		size:small
+		left-of:13
+	12
+		shape:circle
+		fill:yes
+		size:small
+		left-of:11,13
+	13
+		shape:circle
+		fill:yes
+		size:small
+8
+	14
+		shape:diamond
+		fill:yes
+		size:small

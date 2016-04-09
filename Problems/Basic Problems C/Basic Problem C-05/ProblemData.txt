@@ -1,0 +1,345 @@
+3x3
+3
+true
+true
+A
+	a
+		shape:star
+		size:large
+		fill:yes
+	b
+		shape:circle
+		size:very small
+		fill:yes
+		above:a
+B
+	c
+		shape:star
+		size:large
+		fill:yes
+		left-of:e
+	d
+		shape:circle
+		size:very small
+		fill:yes
+		above:c
+		left-of:e
+	e
+		shape:circle
+		size:very small
+		fill:yes
+C
+	f
+		shape:star
+		size:large
+		fill:yes
+		above:i
+		left-of:h
+	g
+		shape:circle
+		size:very small
+		fill:yes
+		above:f
+		left-of:h,i
+	h
+		shape:circle
+		size:very small
+		fill:yes
+		above:i
+	i
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:h
+D
+	j
+		shape:star
+		size:large
+		fill:yes
+	k
+		shape:circle
+		size:very small
+		fill:yes
+		above:j
+	l
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:j,k
+E
+	m
+		shape:star
+		size:large
+		fill:yes
+		left-of:p
+	n
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:m,o,p
+	o
+		shape:circle
+		size:very small
+		fill:yes
+		above:m,n,p
+		left-of:p
+	p
+		shape:circle
+		size:very small
+		fill:yes
+F
+	q
+		shape:star
+		size:large
+		fill:yes
+		above:t
+		left-of:s
+	36
+		shape:circle
+		size:very small
+		fill:yes
+		above:t
+		left-of:q,r,s,t
+	r
+		shape:circle
+		size:very small
+		fill:yes
+		above:q,36,s,t
+		left-of:s,t
+	s
+		shape:circle
+		size:very small
+		fill:yes
+		above:t
+	t
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:s
+G
+	u
+		shape:star
+		size:large
+		fill:yes
+		above:v
+	v
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:x
+	w
+		shape:circle
+		size:very small
+		fill:yes
+		above:v
+		left-of:u,x
+	x
+		shape:circle
+		size:very small
+		fill:yes
+		above:u,v,w
+H
+	y
+		shape:star
+		size:large
+		fill:yes
+		above:z
+		left-of:3
+	z
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:2,3
+	1
+		shape:circle
+		size:very small
+		fill:yes
+		above:z
+		left-of:y,z,2,3
+	2
+		shape:circle
+		size:very small
+		fill:yes
+		above:y,z,1,3
+		left-of:3
+	3
+		shape:circle
+		size:very small
+		fill:yes
+1
+	4
+		shape:star
+		size:large
+		fill:yes
+		left-of:7
+	5
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:4,6,7
+	6
+		shape:circle
+		size:very small
+		fill:yes
+		above:4,5,7
+		left-of:7
+	7
+		shape:circle
+		size:very small
+		fill:yes
+2
+	8
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:10,11,12
+	9
+		shape:circle
+		size:very small
+		fill:yes
+		above:8,12
+		left-of:8,10,11,12
+	10
+		shape:circle
+		size:very small
+		fill:yes
+		above:8,9,11,12
+		left-of:11,12
+	11
+		shape:circle
+		size:very small
+		fill:yes
+		above:8,12
+	12
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:11
+3
+	13
+		shape:star
+		size:large
+		fill:yes
+		above:14,18
+		left-of:17
+	14
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:16,17,18
+	15
+		shape:circle
+		size:very small
+		fill:yes
+		above:14,18
+		left-of:13,14,16,17,18
+	16
+		shape:circle
+		size:very small
+		fill:yes
+		above:13,14,15,17,18
+		left-of:17,18
+	17
+		shape:circle
+		size:very small
+		fill:yes
+		above:14,18
+	18
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:17
+4
+	19
+		shape:star
+		size:large
+		fill:yes
+		above:20,21
+	20
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:21
+	21
+		shape:circle
+		size:very small
+		fill:yes
+5
+	22
+		shape:star
+		size:large
+		fill:yes
+		above:25
+		left-of:24
+	23
+		shape:circle
+		size:very small
+		fill:yes
+		above:22,24,25
+		left-of:24,25
+	24
+		shape:circle
+		size:very small
+		fill:yes
+		above:25
+	25
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:24
+6
+	26
+		shape:star
+		size:large
+		fill:yes
+		above:27
+		left-of:30
+	27
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:29,30
+	28
+		shape:circle
+		size:very small
+		fill:yes
+		above:27
+		left-of:26,27,29,30
+	29
+		shape:circle
+		size:very small
+		fill:yes
+		above:26,27,28,30
+		left-of:30
+	30
+		shape:circle
+		size:very small
+		fill:yes
+		above:27
+7
+	31
+		shape:star
+		size:large
+		fill:yes
+8
+	32
+		shape:star
+		size:large
+		fill:yes
+		above:33
+	33
+		shape:circle
+		size:very small
+		fill:yes
+		left-of:35
+	34
+		shape:circle
+		size:very small
+		fill:yes
+		above:33
+		left-of:32,33,35
+	35
+		shape:circle
+		size:very small
+		fill:yes
+		above:32,33,34
