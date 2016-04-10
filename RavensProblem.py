@@ -24,7 +24,7 @@ class RavensProblem:
         # will be changed during grading, and if you access it directly, your
         # code will crash. Only access the correct answer via the checkAnswer
         # method, supplied below.
-        self.correctAnswer=correctAnswer
+        self.__correctAnswer=correctAnswer
 
         # Whether or not the problem has visual representations available.
         self.hasVisual=hasVisual
@@ -81,7 +81,7 @@ class RavensProblem:
     # this method is completely optional.
     def checkAnswer(self, givenAnswer):
         self.setAnswerReceived(givenAnswer)
-        return self.correctAnswer
+        return self.__correctAnswer
 
     # Sets your Agent's answer to this problem. This method can only be used
     # once; the first answer that is received will be stored. This method is
@@ -99,7 +99,7 @@ class RavensProblem:
     #
     # Your agent does not need to use this method.
     def getCorrect(self):
-        if self.givenAnswer==self.correctAnswer:
+        if self.givenAnswer==self.__correctAnswer:
             return "Correct"
         elif self.givenAnswer<0:
             return "Skipped";

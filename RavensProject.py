@@ -45,7 +45,7 @@ def main():
                                                                 # Note that if your agent makes use of RavensProblem.check to check its answer, the answer passed to check() will be used.
                                                                 # Your agent cannot change its answer once it has checked its answer.
 
-            result=problem.name + "," + str(problem.givenAnswer) + "," + problem.getCorrect() + "," + str(problem.correctAnswer)
+            result=problem.name + "," + str(problem.givenAnswer) + "," + problem.getCorrect() + "," + str(problem.checkAnswer(-1))
 
             results.write("%s\n" % result)
             #except:

@@ -1,5 +1,4 @@
 3x3
-7
 true
 true
 A
