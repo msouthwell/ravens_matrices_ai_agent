@@ -11,7 +11,7 @@ class RavensProblem:
     # dictionary representing the figures in the problem.
     #
     # Your agent does not need to use this method.
-    def __init__(self, name, problemType, correctAnswer, hasVisual, hasVerbal):
+    def __init__(self, name, problemType, problemSetName, hasVisual, hasVerbal):
         # The name of the problem, typically the set followed by an identifier,
         # such as "Basic Problem B-02".
         self.name=name
@@ -19,12 +19,8 @@ class RavensProblem:
         # The type of problem, either 2x2 or 3x3.
         self.problemType=problemType
 
-        # The correct answer to the problem, accessible only after supplying an
-        # answer to the problem. Do NOT access this variable directly. Its name
-        # will be changed during grading, and if you access it directly, your
-        # code will crash. Only access the correct answer via the checkAnswer
-        # method, supplied below.
-        self.__correctAnswer=correctAnswer
+        # The name of the ProblemSet to which this RavensProblem belongs
+        self.problemSetName = problemSetName
 
         # Whether or not the problem has visual representations available.
         self.hasVisual=hasVisual
@@ -55,54 +51,4 @@ class RavensProblem:
         # to D is G as B is to E is to H as C is to F is to one of the answer
         # choices. The answer choices are named 1 through 6.
         self.figures={}
-
-        # Whether or not an answer has been received. As soon as your agent has
-        # given an answer to this problem, answerReceived will be set to true.
-        # Do NOT access answerReceived directly; its name will be changed during
-        # grading and if you access it directly, your code will crash.
-        self.answerReceived=False
-
-        # Your agent's answer to this problem. Do NOT access this variable
-        # directly. Its name will be changed during grading, and if you access it
-        # directly, your code will crash. Only access the correct answer via the
-        # checkAnswer method, supplied below, or by returning a number at the end
-        # of your agent's Solve method.
-        self.givenAnswer=-1
-
-    # Returns the correct answer to the problem.
-    #
-    # In order to receive the correct answer to the problem, your Agent must
-    # supply a guess (givenAnswer). Once it has supplied its guess, it will NOT
-    # be able to change its answer to the problem; the answer passed as
-    # givenAnswer will be stored as the answer to this problem.
-    #
-    # This method is provided to enable your Agent to participate in learning
-    # and meta-reasoning by reflecting on its past incorrect answers. Using
-    # this method is completely optional.
-    def checkAnswer(self, givenAnswer):
-        self.setAnswerReceived(givenAnswer)
-        return self.__correctAnswer
-
-    # Sets your Agent's answer to this problem. This method can only be used
-    # once; the first answer that is received will be stored. This method is
-    # called by either checkAnswer or by the main() method.
-    #
-    # Your agent does not need to use this method.
-    def setAnswerReceived(self, givenAnswer):
-        if not self.answerReceived:
-            self.answerReceived=True
-            self.givenAnswer=int(givenAnswer)
-
-    # Returns whether your Agent's answer is the correct answer. Your agent
-    # does not need to use this method; it is used to identify whether each
-    # problem is correct in main().
-    #
-    # Your agent does not need to use this method.
-    def getCorrect(self):
-        if self.givenAnswer==self.__correctAnswer:
-            return "Correct"
-        elif self.givenAnswer<0:
-            return "Skipped";
-        else:
-            return "Incorrect"
 

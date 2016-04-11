@@ -44,7 +44,4 @@ class Agent:
     # Make sure to return your answer *as an integer* at the end of Solve().
     # Returning your answer as a string may cause your program to crash.
     def Solve(self,problem):
-        for key in problem.__dict__:
-            if key not in ['figures','answerReceived', 'givenAnswer', 'name', 'hasVerbal', 'hasVisual', 'problemType']:
-                print key
-                return problem.__dict__[key]
+        return 1
