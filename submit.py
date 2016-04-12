@@ -30,9 +30,9 @@ def main():
     time.sleep(3.0)
 
   if submission.result():
-    print submission.result()
+    print json.dumps(json.loads(submission.result()), indent=4)
   elif submission.error_report():
-    print submission.error_report()
+    print json.dumps(json.loads(submission.error_report()), indent=4)
   else:
     print "Unknown error."
 
