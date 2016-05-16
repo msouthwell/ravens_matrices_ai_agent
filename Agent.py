@@ -10,6 +10,7 @@
 
 # Install Pillow and uncomment this line to access image processing.
 #from PIL import Image
+#import numpy
 
 class Agent:
     # The default constructor for your Agent. Make sure to execute any
@@ -22,26 +23,12 @@ class Agent:
 
     # The primary method for solving incoming Raven's Progressive Matrices.
     # For each problem, your Agent's Solve() method will be called. At the
-    # conclusion of Solve(), your Agent should return an integer representing its
-    # answer to the question: "1", "2", "3", "4", "5", or "6". These integers
+    # conclusion of Solve(), your Agent should return an int representing its
+    # answer to the question: 1, 2, 3, 4, 5, or 6. Strings of these ints 
     # are also the Names of the individual RavensFigures, obtained through
-    # RavensFigure.getName() (as Strings).
-    #
-    # In addition to returning your answer at the end of the method, your Agent
-    # may also call problem.checkAnswer(int givenAnswer). The parameter
-    # passed to checkAnswer should be your Agent's current guess for the
-    # problem; checkAnswer will return the correct answer to the problem. This
-    # allows your Agent to check its answer. Note, however, that after your
-    # agent has called checkAnswer, it will *not* be able to change its answer.
-    # checkAnswer is used to allow your Agent to learn from its incorrect
-    # answers; however, your Agent cannot change the answer to a question it
-    # has already answered.
-    #
-    # If your Agent calls checkAnswer during execution of Solve, the answer it
-    # returns will be ignored; otherwise, the answer returned at the end of
-    # Solve will be taken as your Agent's answer to this problem.
+    # RavensFigure.getName(). Return a negative number to skip a problem.
     #
     # Make sure to return your answer *as an integer* at the end of Solve().
     # Returning your answer as a string may cause your program to crash.
     def Solve(self,problem):
-        return 1
+        return -1

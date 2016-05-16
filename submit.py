@@ -1,9 +1,18 @@
+# DO NOT MODIFY THIS FILE.
+#
+# This file is merely used to submit your code to the autograder.
+
+from __future__ import print_function
+
 import time
 import os
 import sys
 import argparse
 import json
 from bonnie.submission import Submission
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 def main():
   parser = argparse.ArgumentParser(description='Submits code to the Udacity site.')
@@ -31,12 +40,28 @@ def main():
 
   if submission.result():
     result = submission.result()
-    print json.dumps(result, indent=4)
+    if 'Execution' in result.get('Error', {}):
+      eprint('Execution error!')
+      eprint(result['Error']['Execution'])
+    elif 'Build' in result.get('Error', {}):
+      eprint('Build error!')
+      eprint(result['Error']['Build'])
+    else:
+      if ('Problems' in result) & ('Sets' in result):
+        print('Problem,Correct?,Correct Answer,Agent\'s Answer')
+        problems = result['Problems']
+        for key in problems:
+          problem = problems[key]
+          success = '1' if problem['Correct?'] == 'Correct' else '0'
+          print(','.join([ '"'+problem['Problem']+'"',success,problem['Correct Answer'],problem['Agent\'s Answer'] ]))
+        eprint(json.dumps(result['Sets'], indent=4))
+      else:
+        eprint(json.dumps(result, indent=4))
   elif submission.error_report():
     error_report = submission.error_report()
-    print json.dumps(error_report, indent=4)
+    eprint(json.dumps(error_report, indent=4))
   else:
-    print "Unknown error."
+    eprint("Unknown error.")
 
 if __name__ == '__main__':
   main()
