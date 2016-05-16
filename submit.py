@@ -1,3 +1,7 @@
+# DO NOT MODIFY THIS FILE.
+#
+# This file is merely used to submit your code to the autograder.
+
 from __future__ import print_function
 
 import time

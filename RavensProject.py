@@ -3,9 +3,7 @@
 # Any modifications to this file will not be used when grading your project.
 # If you have any questions, please email the TAs.
 #
-#
-
-# The main driver file for Project2. You may edit this file to change which
+# The main driver file for the project. You may edit this file to change which
 # problems your Agent addresses while debugging and designing, but you should
 # not depend on changes to this file for final execution of your project. Your
 # project will be graded using our own version of this file.
@@ -21,7 +19,10 @@ from RavensGrader import grade
 def getNextLine(r):
     return r.readline().rstrip()
 
-
+# The project's main solve method. This will generate your agent's answers
+# to all the current problems.
+#
+# You do not need to use this method.
 def solve():
     sets=[] # The variable 'sets' stores multiple problem sets.
             # Each problem set comes from a different folder in /Problems/
@@ -52,7 +53,8 @@ def solve():
                 results.write("%s,%s,%d\n" % (set.name, problem.name, answer))
     r.close()
 
-
+# The main execution will have your agent generate answers for all the problems,
+# then generate the grades for them.
 def main():
     solve()
     grade()
