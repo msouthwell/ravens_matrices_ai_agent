@@ -1,7 +1,3 @@
-# DO NOT MODIFY THIS FILE.
-#
-# This file is merely used to submit your code to the autograder.
-
 from __future__ import print_function
 
 import time
@@ -28,6 +24,19 @@ def main():
   agent_file = 'Agent.py'
   if agent_file not in files:
     files.append(agent_file)
+
+  forbidden_exts = ['.class', '.pyc']
+  expected_exts = ['.java', '.py']
+  def ext(file):
+    _, extension = os.path.splitext(file)
+    return extension
+  for file in files:
+    if ext(file) in forbidden_exts:
+      print("Wait! You don't really want to submit a", ext(file), "file! Please submit your .java or .py files only.")
+      return
+    elif ext(file) not in expected_exts:
+      print ("Warning: you're submitting a", ext(file), "file. This may not be what you intend.  Press ctrl-C or cmd-C now to cancel...")
+      time.sleep(3.0)
 
   submission = Submission('cs7637', args.assignment, 
                           filenames = args.files, 
