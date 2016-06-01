@@ -12,7 +12,7 @@ def eprint(*args, **kwargs):
 
 def main():
   parser = argparse.ArgumentParser(description='Submits code to the Udacity site.')
-  parser.add_argument('--assignment', choices = ['P1', 'P2', 'P3'], required=True)
+  parser.add_argument('--assignment', choices = ['P1', 'P2', 'P3', 'error-check'], required=True)
   parser.add_argument('--provider', choices = ['gt', 'udacity'], default = 'gt')
   parser.add_argument('--environment', choices = ['local', 'development', 'staging', 'production'], default = 'production')
   parser.add_argument('--files', type=str, nargs='+', default = [])
