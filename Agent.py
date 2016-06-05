@@ -13,10 +13,14 @@ from PIL import Image
 import  numpy as np
 from itertools import product
 import ufarray
-# import logging, sys
 
-# logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+TOLERANCE = 50
 
+UNCHANGED_W = 0
+FILLED_W = 1
+ROTATE_W = 2
+DELETED_W = 10
+ADDED_W = 10
 
 # Code copied from https://github.com/spwhitt/cclabel/blob/master/cclabel.py
 # I altered slightly to fit problem
@@ -122,6 +126,12 @@ def erode(image):
     output[np.where(output == 2)] = 1
     return output
 
+def object_unchanged(a, b):
+    if abs(np.sum(a["Shape Pixels"] - b["Shape Pixels"])) < TOLERANCE:
+        return True
+    else:
+        return False
+
 class Agent:
     # The default constructor for your Agent. Make sure to execute any
     # processing necessary before your Agent starts solving problems here.
@@ -152,26 +162,143 @@ class Agent:
                 else:
                     obj = {}
                     obj["Shape Pixels"] = tmp
+                    obj["Matched to"] = ""
+                    obj["Transform"] = "not matched"
+                    obj["Matched Weight"] = 999
+                    obj["Filled"] = ""
                     this_figure.frame["Objects"]["Object " + str(i)] = obj
 
             # Set pixel back to 1 for future comparisons
             this_figure.frame["Image"][np.where(this_figure.frame["Image"] > 1)] = 1
 
+    def match(self, a, b, transform, weight):
+        if transform == "DELETED":
+            a["Transform"] = transform
+            a["Matched Weight"] = weight
+        elif transform == "ADDED":
+            b["Transform"] = transform
+            b["Transform"] = weight
+        else:
+            a["Transform"] = transform
+            a["Matched Weight"] = weight
+            a["Matched to"] = str(b)
+            b["Matched to"] = str(a)
+            b["Transform"] = transform
+            b["Matched Weight"] = weight
+
+    def match_objects(self, fig_a, fig_b):
+        for a, b in product(fig_a.frame["Objects"], fig_b.frame["Objects"]):
+            a_object = fig_a.frame["Objects"][a]
+            b_object = fig_b.frame["Objects"][b]
+
+            if object_unchanged(a_object, b_object):
+                self.match(a_object, b_object, "UNCHANGED", UNCHANGED_W)
+            elif len(fig_a.frame["Objects"]) > len(fig_b.frame["Objects"]):
+                self.match(a_object, b_object, "DELETED", DELETED_W)
+            elif len(fig_a.frame["Objects"]) < len(fig_b.frame["Objects"]):
+                self.match(a_object, b_object, "ADDED", ADDED_W)
+            else:
+                # print("Unable to match " + str(fig_a.name) + " and " + str(fig_b.name))
+                return -1
+
+    def array_transforms(self, a, b):
+        transforms = []
+        for i, j in product(a, b):
+            a_object = a[i]
+            b_object = b[j]
+
+            # TODO: test for the add/delete transform
+            # if object was matched, then it is not an add or a delete
+            if a_object["Matched to"] != "":
+                transforms.append(a_object["Transform"])
+            else: #if it was not matched, then add both a and b because one will be a add/delete
+                transforms.append(a_object["Transform"])
+                transforms.append(b_object["Transform"])
+
+        return transforms
+
     def solve_two(self, problem):
 
-        for figure_name in problem.figures:
-            this_figure = problem.figures[figure_name]
+        confidence = 999
+        # dictionary (fig 1, fig 2) = {}
+        semantic_net = {}
 
-            print("Figure " + figure_name)
-            print("    Figure Pixel Total: " + str(np.sum(this_figure.frame["Image"])))
-            if len(this_figure.frame["Objects"]) < 15:
-                for shapes in this_figure.frame["Objects"]:
-                    print("    " + str(shapes))
-                    this_shape = this_figure.frame["Objects"][shapes]
-                    print("           " + str(np.sum(this_shape["Shape Pixels"])))
-            else:
-                print("Too many shapes found, skip question")
-                answer = -1
+        semantic_net["A", "B"] = []
+        semantic_net["A", "C"] = []
+
+
+        # Get transformation from A to B
+
+        if self.match_objects(problem.figures["A"], problem.figures["B"]) == -1:
+            print("Skipping question")
+            return -1
+
+        semantic_net["A", "B"] = self.array_transforms(problem.figures["A"].frame["Objects"], problem.figures["B"].frame["Objects"])
+
+        # Get transformation from A to C
+        if self.match_objects(problem.figures["A"], problem.figures["C"]) == -1:
+            print("Skipping questions")
+            return -1
+
+        semantic_net["A", "C"] = self.array_transforms(problem.figures["A"].frame["Objects"], problem.figures["C"].frame["Objects"])
+
+
+        if self.match_objects(problem.figures["A"], problem.figures["C"]) == -1:
+            return -1
+
+        for i in range(1,7):
+            if self.match_objects(problem.figures["C"], problem.figures[str(i)]) != -1:
+                semantic_net["C", str(i)] = self.array_transforms(problem.figures["C"].frame["Objects"], problem.figures[str(i)].frame["Objects"])
+            if self.match_objects(problem.figures["B"], problem.figures[str(i)]) != -1:
+                semantic_net["B", str(i)] = self.array_transforms(problem.figures["B"].frame["Objects"], problem.figures[str(i)].frame["Objects"])
+
+
+        for f1, f2 in semantic_net:
+            if f1 == "A" and (f2 == "B" or f2 == "C"):
+                pass
+            elif f1 =="B" and f2 =="C":
+                pass
+            elif semantic_net[("C", f2)] == semantic_net["A", "B"] and semantic_net[("A", "C")] == semantic_net["B", f2]:
+                answer = f2
+                confidence = 0
+            elif semantic_net[("C", f2)] == semantic_net["A", "B"]:
+                if confidence > 10:
+                    answer = f2
+                    confidence = 10
+            elif semantic_net[("B", f2)] == semantic_net["A", "C"]:
+                if confidence > 20:
+                    answer = f2
+                    confidence = 10
+        print(answer)
+
+
+
+        # for each object in A
+            # for each object in B
+                # oa to ob find transformation that best fits
+                # store as link into (fig1, fig2) dictionary
+
+        # Get transformation from A to C
+
+        # for each figure
+
+            # compare against every other figure
+
+                # if figure is same, pass
+                # for each object
+        # for figure_name in problem.figures:
+        #     this_figure = problem.figures[figure_name]
+
+        #     print("Figure " + figure_name)
+        #     print("    Figure Pixel Total: " + str(np.sum(this_figure.frame["Image"])))
+        #     if len(this_figure.frame["Objects"]) < 15:
+        #         for shapes in this_figure.frame["Objects"]:
+        #             print("    " + str(shapes))
+        #             this_shape = this_figure.frame["Objects"][shapes]
+        #             print("           " + str(np.sum(this_shape["Shape Pixels"])))
+        #     else:
+        #         print("Too many shapes found, skip question")
+        #         answer = -1
 
 
 
