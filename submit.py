@@ -1,7 +1,3 @@
-# DO NOT MODIFY THIS FILE.
-#
-# This file is merely used to submit your code to the autograder.
-
 from __future__ import print_function
 
 import time
@@ -16,7 +12,7 @@ def eprint(*args, **kwargs):
 
 def main():
   parser = argparse.ArgumentParser(description='Submits code to the Udacity site.')
-  parser.add_argument('--assignment', choices = ['P1', 'P2', 'P3'], required=True)
+  parser.add_argument('--assignment', choices = ['P1', 'P2', 'P3', 'error-check'], required=True)
   parser.add_argument('--provider', choices = ['gt', 'udacity'], default = 'gt')
   parser.add_argument('--environment', choices = ['local', 'development', 'staging', 'production'], default = 'production')
   parser.add_argument('--files', type=str, nargs='+', default = [])
@@ -28,6 +24,19 @@ def main():
   agent_file = 'Agent.py'
   if agent_file not in files:
     files.append(agent_file)
+
+  forbidden_exts = ['.class', '.pyc']
+  expected_exts = ['.java', '.py']
+  def ext(file):
+    _, extension = os.path.splitext(file)
+    return extension
+  for file in files:
+    if ext(file) in forbidden_exts:
+      print("Wait! You don't really want to submit a", ext(file), "file! Please submit your .java or .py files only.")
+      return
+    elif ext(file) not in expected_exts:
+      print ("Warning: you're submitting a", ext(file), "file. This may not be what you intend.  Press ctrl-C or cmd-C now to cancel...")
+      time.sleep(3.0)
 
   submission = Submission('cs7637', args.assignment, 
                           filenames = args.files, 
