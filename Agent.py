@@ -132,6 +132,14 @@ def object_unchanged(a, b):
     else:
         return False
 
+def object_rotated(a, b):
+    c = a
+    for i in [90, 180, 270]:
+        c["Shape Pixels"] = np.rot90(c["Shape Pixels"])
+        if object_unchanged(c, b):
+            return True
+    return False
+
 class Agent:
     # The default constructor for your Agent. Make sure to execute any
     # processing necessary before your Agent starts solving problems here.
@@ -193,6 +201,8 @@ class Agent:
 
             if object_unchanged(a_object, b_object):
                 self.match(a_object, b_object, "UNCHANGED", UNCHANGED_W)
+            elif object_rotated(a_object, b_object):
+                self.match(a_object, b_object, "ROTATED", ROTATED_W)
             elif len(fig_a.frame["Objects"]) > len(fig_b.frame["Objects"]):
                 self.match(a_object, b_object, "DELETED", DELETED_W)
             elif len(fig_a.frame["Objects"]) < len(fig_b.frame["Objects"]):
@@ -219,6 +229,7 @@ class Agent:
 
     def solve_two(self, problem):
 
+        answer = -1
         confidence = 999
         # dictionary (fig 1, fig 2) = {}
         semantic_net = {}
@@ -237,7 +248,7 @@ class Agent:
 
         # Get transformation from A to C
         if self.match_objects(problem.figures["A"], problem.figures["C"]) == -1:
-            print("Skipping questions")
+            # print("Skipping questions")
             return -1
 
         semantic_net["A", "C"] = self.array_transforms(problem.figures["A"].frame["Objects"], problem.figures["C"].frame["Objects"])
@@ -249,77 +260,29 @@ class Agent:
         for i in range(1,7):
             if self.match_objects(problem.figures["C"], problem.figures[str(i)]) != -1:
                 semantic_net["C", str(i)] = self.array_transforms(problem.figures["C"].frame["Objects"], problem.figures[str(i)].frame["Objects"])
-            if self.match_objects(problem.figures["B"], problem.figures[str(i)]) != -1:
+            if  self.match_objects(problem.figures["B"], problem.figures[str(i)]) != -1:
                 semantic_net["B", str(i)] = self.array_transforms(problem.figures["B"].frame["Objects"], problem.figures[str(i)].frame["Objects"])
 
 
-        for f1, f2 in semantic_net:
-            if f1 == "A" and (f2 == "B" or f2 == "C"):
+        for fig_i, fig_j in semantic_net:
+            if fig_i == "A" and (fig_j == "B" or fig_j == "C"):
                 pass
-            elif f1 =="B" and f2 =="C":
+            elif fig_i == "B" and fig_j == "C":
                 pass
-            elif semantic_net[("C", f2)] == semantic_net["A", "B"] and semantic_net[("A", "C")] == semantic_net["B", f2]:
-                answer = f2
+            elif semantic_net[("C", fig_j)] == semantic_net["A", "B"] and semantic_net[("A", "C")] == semantic_net["B", fig_j]:
+                answer = fig_j
                 confidence = 0
-            elif semantic_net[("C", f2)] == semantic_net["A", "B"]:
+            elif semantic_net[("C", fig_j)] == semantic_net["A", "B"]:
                 if confidence > 10:
-                    answer = f2
+                    answer = fig_j
                     confidence = 10
-            elif semantic_net[("B", f2)] == semantic_net["A", "C"]:
+            elif semantic_net[("B", fig_j)] == semantic_net["A", "C"]:
                 if confidence > 20:
-                    answer = f2
+                    answer = fig_j
                     confidence = 10
-        print(answer)
-
-
-
-        # for each object in A
-            # for each object in B
-                # oa to ob find transformation that best fits
-                # store as link into (fig1, fig2) dictionary
-
-        # Get transformation from A to C
-
-        # for each figure
-
-            # compare against every other figure
-
-                # if figure is same, pass
-                # for each object
-        # for figure_name in problem.figures:
-        #     this_figure = problem.figures[figure_name]
-
-        #     print("Figure " + figure_name)
-        #     print("    Figure Pixel Total: " + str(np.sum(this_figure.frame["Image"])))
-        #     if len(this_figure.frame["Objects"]) < 15:
-        #         for shapes in this_figure.frame["Objects"]:
-        #             print("    " + str(shapes))
-        #             this_shape = this_figure.frame["Objects"][shapes]
-        #             print("           " + str(np.sum(this_shape["Shape Pixels"])))
-        #     else:
-        #         print("Too many shapes found, skip question")
-        #         answer = -1
-
-
-
-        # diff = np.sum(problem.figures["A"].frame["Image"]) / np.sum(problem.figures["B"].frame["Image"])
-
-        # print("Difference between A and B is: " + str(diff))
-
-        # answer = -1
-        # temp = 100000000
-        # for figure_name in problem.figures:
-        #     if figure_name != "A" and figure_name != "B" and figure_name != "C":
-        #         second_diff = np.sum(problem.figures["C"].frame["Image"]) / np.sum(problem.figures[figure_name].frame["Image"])
-        #         print("Difference between C and " + figure_name + " is: " + str(second_diff))
-
-        #         if abs(diff - second_diff) < temp:
-        #             temp = abs(diff-second_diff)
-        #             answer = figure_name
-
         # print(answer)
 
-        return -1
+        return int(answer)
 
     def solve_three(self, problem):
 
