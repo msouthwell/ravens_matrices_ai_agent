@@ -8,7 +8,49 @@ image = np.array([[1, 0, 0, 0, 0, 0, 0, 0],
 				  [0, 0, 1, 1, 1, 0, 1, 1],
 				  [0, 1, 0, 0, 0, 0, 0, 0]])
 
+def object_rotated(a, b):
+    print("Testing for object rotated")
+    c = a
+    for i in range(1,4):
+        print(i)
+        c = np.rot90(c)
+        print(c)
+        if object_unchanged(c, b):
+            return str("ROTATED_" + str(i*90))
+    return -1
 
+# The dilate function below was altered from the blog listed below
+# # http://blog.ostermiller.org/dilate-and-erode
+# # Changed bits are left as 2 to aid in erode the image
+# # dilate and erode are probably not really needed, but it prevents an isolated pixel from becoming its own object
+# def dilate(image):
+#     for (i, j) in product(range(image.shape[0]), range(image.shape[1])):
+#         if (image[i, j] == 1):
+#             if (image[i-1, j] == 0):
+#                 image[i-1, j] = 2
+#             if (image[i, j-1] == 0):
+#                 image[i, j-1] = 2
+#             if (i+1 < image.shape[0] and image[i+1, j] == 0):
+#                 image[i+1, j] = 2
+#             if (j+1 < image.shape[1] and image[i, j+1] == 0):
+#                 image[i, j+1] = 2
+#     return image
+
+# def erode(image):
+#     tmp = np.zeros(image.shape)
+#     for (i, j) in product(range(image.shape[0]), range(image.shape[1])):
+#         if (image[i, j] == 2):
+#             if (image[i-1, j] == 2):
+#                 tmp[i-1, j] = 2
+#             if (image[i, j-1] == 2):
+#                 tmp[i, j-1] = 2
+#             if (i+1 < image.shape[0] and image[i+1, j] == 2):
+#                 tmp[i+1, j] = 2
+#             if (j+1 < image.shape[1] and image[i, j+1] == 2):
+#                 tmp[i, j+1] = 2
+#     output = image - tmp
+#     output[np.where(output == 2)] = 1
+#     return output
 # Code copied from https://github.com/spwhitt/cclabel/blob/master/cclabel.py
 # I altered slightly to fit problem
 # I attemted creating my own component labeling, but it was taking significant amounts of time
@@ -167,5 +209,5 @@ def dilate(image):
 # 	output = image - tmp
 # 	output[np.where(output == 2)] = 1
 # 	return output
-
-print(color_shapes(image))
+print(np.rot90(image))
+# print(color_shapes(image))

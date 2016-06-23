@@ -12,19 +12,34 @@
 from PIL import Image
 import  numpy as np
 from itertools import product
-import ufarray
+                # ufarray is used with the two pass connected component labeling
+import ufarray  # ufarray class from https://github.com/spwhitt/cclabel/blob/master/ufarray.py
+import copy
+import logging
 
-TOLERANCE = 50
-
+TOLERANCE = .20 # 20% needed for problem 6
+IMAGE_INTENSITY = 1  
+OBJECT_THRESHOLD = 150
 UNCHANGED_W = 0
 FILLED_W = 1
-ROTATE_W = 2
+ROTATED_W = 2
 DELETED_W = 10
 ADDED_W = 10
+FILLED_W = 3
 
+
+
+
+######################################################################
+#####    COMPONENT LABELING
+#####
+######################################################################
+
+# This is a two pass connected component labeling algorithm that I found open source on github
+# It seperates each figure into its component images, with each shape getting its own 'color'
 # Code copied from https://github.com/spwhitt/cclabel/blob/master/cclabel.py
-# I altered slightly to fit problem
-# I attemted creating my own component labeling, but it was taking significant amounts of time
+# I altered code slightly to fit problem
+# I attempted creating my own component labeling, but it was taking significant amounts of time
 # Algorithm obtained from "Optimizing Two-Pass Connected-Component Labeling 
 # by Kesheng Wu, Ekow Otoo, and Kenji Suzuki
 #
@@ -33,7 +48,7 @@ def color_shapes(image):
     width, height = image.shape
  
     # Union find data structure
-    uf = ufarray.UFarray()
+    uf = ufarray.UFarray() # UFarray code copied from https://github.com/spwhitt/cclabel/blob/master/ufarray.py
     uf.makeLabel()
     #
     # First pass
@@ -79,66 +94,81 @@ def color_shapes(image):
 
         # Name of the label the current point belongs to
         label = uf.find(labels[(i, j)])
-
         output[i, j] = label
 
     return output
 
+######## END COPIED CODE ###########
+
+
+######################################################################
+#####    IMAGE PROCESSING METHODS
+#####
+######################################################################
+
 def to_image_array(filename):
     image = Image.open(filename).convert("L") #opens image, converts to single channel grayscale
-    im_data = np.asarray(image, dtype=np.uint8).T
+    im_data = np.asarray(image, dtype=np.int32).T
     binary = np.zeros(im_data.shape)
     binary[np.where(im_data <= 128)] = 1 
     binary[np.where(im_data > 128)] = 0
 
     return binary
 
-# The dilate function below was altered from the blog listed below
-# http://blog.ostermiller.org/dilate-and-erode
-# Changed bits are left as 2 to aid in erode the image
-# dilate and erode are probably not really needed, but I did not want a possible isolated pixel to become its own object
-def dilate(image):
-    for (i, j) in product(range(image.shape[0]), range(image.shape[1])):
-        if (image[i, j] == 1):
-            if (image[i-1, j] == 0):
-                image[i-1, j] = 2
-            if (image[i, j-1] == 0):
-                image[i, j-1] = 2
-            if (i+1 < image.shape[0] and image[i+1, j] == 0):
-                image[i+1, j] = 2
-            if (j+1 < image.shape[1] and image[i, j+1] == 0):
-                image[i, j+1] = 2
-    return image
 
-def erode(image):
-    tmp = np.zeros(image.shape)
-    for (i, j) in product(range(image.shape[0]), range(image.shape[1])):
-        if (image[i, j] == 2):
-            if (image[i-1, j] == 2):
-                tmp[i-1, j] = 2
-            if (image[i, j-1] == 2):
-                tmp[i, j-1] = 2
-            if (i+1 < image.shape[0] and image[i+1, j] == 2):
-                tmp[i+1, j] = 2
-            if (j+1 < image.shape[1] and image[i, j+1] == 2):
-                tmp[i, j+1] = 2
-    output = image - tmp
-    output[np.where(output == 2)] = 1
-    return output
 
-def object_unchanged(a, b):
-    if abs(np.sum(a["Shape Pixels"] - b["Shape Pixels"])) < TOLERANCE:
-        return True
+######################################################################
+#####    OBJECT COMPARISON METHODS
+#####
+######################################################################
+
+def object_unchanged(a, b, tol=TOLERANCE):
+    diff = (np.sum(abs(a["Shape Pixels"] - b["Shape Pixels"]))) / np.sum(a["Shape Pixels"])
+    if diff <= TOLERANCE:
+        print("Shapes the same with difference: " + str(diff))
+        return "UNCHANGED"
     else:
-        return False
+        return -1
 
 def object_rotated(a, b):
-    c = a
-    for i in [90, 180, 270]:
+    c = copy.copy(a)
+    for i in range(1,4):
         c["Shape Pixels"] = np.rot90(c["Shape Pixels"])
-        if object_unchanged(c, b):
-            return True
-    return False
+        unchanged = object_unchanged(c, b)      
+        if unchanged == "UNCHANGED":
+            if i == 3:
+                return str("ROTATED_90") 
+            else:
+                return str("ROTATED_" + str(i *90))
+    return -1
+
+def object_filled(a, b):
+    # print("Entered object_filled")
+    # tmp = {}
+    # tmp["Shape Pixels"] = fill(b["Shape Pixels"])
+
+    # transform = object_unchanged(a, tmp, tol=TOLERANCE_FILL)
+    # if  transform == "UNCHANGED":
+    #     return "FILLED"
+    # else:
+    #     tmp["Shape Pixels"] = fill(a["Shape Pixels"])
+    #     transform = object_unchanged(b, tmp, tol=TOLERANCE_FILL)
+    #     if transform == "UNCHANGED":
+    #         return "FILLED"
+    #     else:
+    #         return -1
+    return -1
+
+class Node:
+    '''Holds information about each object inside a raven figure'''
+
+    def __init__(self):
+        pass
+
+######################################################################
+#####    MAIN AGENT
+#####
+######################################################################
 
 class Agent:
     # The default constructor for your Agent. Make sure to execute any
@@ -150,93 +180,133 @@ class Agent:
         pass
 
     def create_nodes(self, figures):
+        '''Seperates each figure into nodes for the creation of the semantic net '''
         for figure_name in figures:
             this_figure = figures[figure_name]
             this_figure.frame = {}
 
             # Process the image for future operations
             array = to_image_array(this_figure.visualFilename)
-            array = erode(dilate(array))  # morphological open to remove possible isolated pixels
+
             this_figure.frame["Image"] = color_shapes(array)
-            this_figure.frame["Objects"] = {}
+            this_figure.frame["Objects"] = Node()
 
             # Seperate each shape into its own object
             for i in range(1, int(np.amax(this_figure.frame["Image"])) + 1):
                 tmp = np.zeros(this_figure.frame["Image"].shape)
-                # Set pixel back to 1 for future comparisons
-                tmp[np.where(this_figure.frame["Image"] == i)] = 1
-                if np.sum(tmp) == 0:
+
+                # Set pixel back to IMAGE_INTENSITY rather than its 'color'
+                tmp[np.where(this_figure.frame["Image"] == i)] = IMAGE_INTENSITY
+
+                if np.sum(tmp) <= OBJECT_THRESHOLD: 
+                    logging.warning("Found an object with " + str(np.sum(tmp)) + "pixels, passed")
                     pass
                 else:
                     obj = {}
                     obj["Shape Pixels"] = tmp
-                    obj["Matched to"] = ""
+                    obj["Matched to"] = "none"
                     obj["Transform"] = "not matched"
-                    obj["Matched Weight"] = 999
-                    obj["Filled"] = ""
+                    obj["Matched Weight"] = 0
                     this_figure.frame["Objects"]["Object " + str(i)] = obj
+                    # test_image = Image.fromarray(tmp)
+                    # test_image.show()
 
-            # Set pixel back to 1 for future comparisons
-            this_figure.frame["Image"][np.where(this_figure.frame["Image"] > 1)] = 1
+            # Set uncolor component images
+            this_figure.frame["Image"][np.where(this_figure.frame["Image"] > 1)] = IMAGE_INTENSITY
 
-    def match(self, a, b, transform, weight):
+    # method that sets objects frame values
+    def match(self, a, b, transform):
         if transform == "DELETED":
             a["Transform"] = transform
-            a["Matched Weight"] = weight
         elif transform == "ADDED":
             b["Transform"] = transform
-            b["Transform"] = weight
         else:
             a["Transform"] = transform
-            a["Matched Weight"] = weight
             a["Matched to"] = str(b)
             b["Matched to"] = str(a)
             b["Transform"] = transform
-            b["Matched Weight"] = weight
 
     def match_objects(self, fig_a, fig_b):
-        for a, b in product(fig_a.frame["Objects"], fig_b.frame["Objects"]):
-            a_object = fig_a.frame["Objects"][a]
-            b_object = fig_b.frame["Objects"][b]
+        # print("Entered match_objects")
+        # print("Frame: " + str(fig_a.name))
+        # print("Frame: " + str(fig_b.name))
+        for a in fig_a.frame["Objects"]:
+            for b in fig_b.frame["Objects"]:
+                a_object = fig_a.frame["Objects"][a]
+                b_object = fig_b.frame["Objects"][b]
 
-            if object_unchanged(a_object, b_object):
-                self.match(a_object, b_object, "UNCHANGED", UNCHANGED_W)
-            elif object_rotated(a_object, b_object):
-                self.match(a_object, b_object, "ROTATED", ROTATED_W)
-            elif len(fig_a.frame["Objects"]) > len(fig_b.frame["Objects"]):
-                self.match(a_object, b_object, "DELETED", DELETED_W)
-            elif len(fig_a.frame["Objects"]) < len(fig_b.frame["Objects"]):
-                self.match(a_object, b_object, "ADDED", ADDED_W)
-            else:
-                # print("Unable to match " + str(fig_a.name) + " and " + str(fig_b.name))
-                return -1
+                if a_object["Matched to"] == "none":
+                    a_object["Matched Weight"] = 0
+                if b_object["Matched to"] == "none":
+                    b_object["Matched Weight"] = 0
+
+                while True:
+                    transform = "no transform"
+                    if (a_object["Matched Weight"] and b_object["Matched Weight"]) == UNCHANGED_W:
+                        transform = object_unchanged(a_object, b_object)
+                        if transform == "UNCHANGED": 
+                            self.match(a_object, b_object, transform)
+                            break 
+                        else: 
+                            a_object["Matched Weight"] += 1
+                            b_object["Matched Weight"] += 1
+                    elif (a_object["Matched Weight"] <= ROTATED_W) and (b_object["Matched Weight"] <= ROTATED_W):
+                        transform = object_rotated(a_object, b_object)
+                        if (transform == "ROTATED_90") or (transform == "ROTATED_180") or (transform == "ROTATED_270"): 
+                            self.match(a_object, b_object, transform)
+                            break 
+                        else: 
+                            a_object["Matched Weight"] += 1
+                            b_object["Matched Weight"] += 1
+                    elif (a_object["Matched Weight"] <= FILLED_W) and (b_object["Matched Weight"] <= FILLED_W):
+                        transform = object_filled(a_object, b_object)
+                        if transform == "FILLED": 
+                            self.match(a_object, b_object, transform)
+                            break 
+                        else: 
+                            a_object["Matched Weight"] += 1
+                            b_object["Matched Weight"] += 1
+                    else:
+                        break
+
+        # print("object X length " + str(len(fig_a.frame["Objects"])))
+        # print("object Y length " + str(len(fig_b.frame["Objects"])))
+
+        #######
+        # Checks for added or deleted objects
+        for a in fig_a.frame["Objects"]:
+            for b in fig_b.frame["Objects"]:
+                a_object = fig_a.frame["Objects"][a]
+                b_object = fig_b.frame["Objects"][b]
+                if (len(fig_a.frame["Objects"]) > len(fig_b.frame["Objects"])) and a_object["Matched to"] == "none":
+                    a_object["Transform"] = "DELETED"
+                elif (len(fig_a.frame["Objects"]) < len(fig_b.frame["Objects"])) and b_object["Matched to"] == "none":
+                    b_object["Transform"] = "ADDED"
 
     def array_transforms(self, a, b):
         transforms = []
-        for i, j in product(a, b):
+        for i in a:
             a_object = a[i]
-            b_object = b[j]
+            transforms.append(a_object["Transform"])
 
-            # TODO: test for the add/delete transform
-            # if object was matched, then it is not an add or a delete
-            if a_object["Matched to"] != "":
-                transforms.append(a_object["Transform"])
-            else: #if it was not matched, then add both a and b because one will be a add/delete
-                transforms.append(a_object["Transform"])
-                transforms.append(b_object["Transform"])
+        for i in b:
+            b_object = b[i]
+            transforms.append(b_object["Transform"])
 
         return transforms
+
+    def reset_frame_objects(self, a):
+        for i in a:
+            obj = a[i]
+            obj["Transform"] = "not matched"
+            obj["Matched to"] = "none"
+            obj["Matched Weight"] = 0
 
     def solve_two(self, problem):
 
         answer = -1
         confidence = 999
-        # dictionary (fig 1, fig 2) = {}
         semantic_net = {}
-
-        semantic_net["A", "B"] = []
-        semantic_net["A", "C"] = []
-
 
         # Get transformation from A to B
 
@@ -244,44 +314,67 @@ class Agent:
             print("Skipping question")
             return -1
 
-        semantic_net["A", "B"] = self.array_transforms(problem.figures["A"].frame["Objects"], problem.figures["B"].frame["Objects"])
+        problem.horz_relation = self.array_transforms(problem.figures["A"].frame["Objects"], problem.figures["B"].frame["Objects"])
+        problem.horz_relation_size_diff = len(problem.figures["A"].frame["Objects"]) - len(problem.figures["B"].frame["Objects"])
+        self.reset_frame_objects(problem.figures["A"].frame["Objects"])
+        self.reset_frame_objects(problem.figures["B"].frame["Objects"])
 
         # Get transformation from A to C
         if self.match_objects(problem.figures["A"], problem.figures["C"]) == -1:
-            # print("Skipping questions")
+            print("Skipping questions")
             return -1
 
-        semantic_net["A", "C"] = self.array_transforms(problem.figures["A"].frame["Objects"], problem.figures["C"].frame["Objects"])
+        problem.vert_relation = self.array_transforms(problem.figures["A"].frame["Objects"], problem.figures["C"].frame["Objects"])
+        problem.vert_relation_size_diff = len(problem.figures["A"].frame["Objects"]) - len(problem.figures["C"].frame["Objects"])
+        self.reset_frame_objects(problem.figures["A"].frame["Objects"])
+        self.reset_frame_objects(problem.figures["C"].frame["Objects"])
 
-
-        if self.match_objects(problem.figures["A"], problem.figures["C"]) == -1:
+        problem.horz_relation.sort()
+        problem.vert_relation.sort()
+        if problem.horz_relation[0] == "not matched" and problem.vert_relation[0] == "not matched":
+            print("Skipping questions")
             return -1
+        # print(problem.horz_relation)
+        # print(problem.vert_relation)
 
         for i in range(1,7):
             if self.match_objects(problem.figures["C"], problem.figures[str(i)]) != -1:
                 semantic_net["C", str(i)] = self.array_transforms(problem.figures["C"].frame["Objects"], problem.figures[str(i)].frame["Objects"])
             if  self.match_objects(problem.figures["B"], problem.figures[str(i)]) != -1:
                 semantic_net["B", str(i)] = self.array_transforms(problem.figures["B"].frame["Objects"], problem.figures[str(i)].frame["Objects"])
+            self.reset_frame_objects(problem.figures["B"].frame["Objects"])
+            self.reset_frame_objects(problem.figures["C"].frame["Objects"])
+            self.reset_frame_objects(problem.figures[str(i)].frame["Objects"])
 
+        # for net in semantic_net:
+        #     semantic_net[net].sort()
+        #     print(str(net) + "  : " + str(semantic_net[net]))
 
         for fig_i, fig_j in semantic_net:
-            if fig_i == "A" and (fig_j == "B" or fig_j == "C"):
-                pass
-            elif fig_i == "B" and fig_j == "C":
-                pass
-            elif semantic_net[("C", fig_j)] == semantic_net["A", "B"] and semantic_net[("A", "C")] == semantic_net["B", fig_j]:
+            obj_number_diff = len(problem.figures[fig_i].frame["Objects"]) - len(problem.figures[fig_j].frame["Objects"])
+            if semantic_net[("C", fig_j)] == problem.horz_relation and problem.vert_relation == semantic_net["B", fig_j]:
                 answer = fig_j
                 confidence = 0
-            elif semantic_net[("C", fig_j)] == semantic_net["A", "B"]:
+
+            elif semantic_net[("C", fig_j)] == problem.horz_relation:
                 if confidence > 10:
                     answer = fig_j
                     confidence = 10
-            elif semantic_net[("B", fig_j)] == semantic_net["A", "C"]:
+
+            elif semantic_net[("B", fig_j)] == problem.vert_relation:
                 if confidence > 20:
                     answer = fig_j
                     confidence = 10
-        # print(answer)
+            elif (len(problem.figures["C"].frame["Objects"]) - len(problem.figures[fig_j].frame["Objects"])) == problem.horz_relation_size_diff:
+                if confidence > 30:
+                    answer = fig_j
+            elif (len(problem.figures["B"].frame["Objects"]) - len(problem.figures[fig_j].frame["Objects"])) == problem.vert_relation_size_diff:
+                if confidence > 30:
+                    answer = fig_j
 
+
+
+        print ("Answer is : " + str(answer))
         return int(answer)
 
     def solve_three(self, problem):
@@ -299,9 +392,17 @@ class Agent:
     # Returning your answer as a string may cause your program to crash.
     def Solve(self, problem):
 
-        print(problem.name)
+        logging.info(problem.name)
+
+        # add properties to the problem
+
+        problem.horz_relation = []  # TODO: is an array the best way to represent this
+        problem.vert_relation = []
+
 
         self.create_nodes(problem.figures)
+
+
 
         if problem.problemType == "2x2":
             answer = self.solve_two(problem)
@@ -309,3 +410,5 @@ class Agent:
             answer = self.solve_three(problem)
 
         return answer
+
+

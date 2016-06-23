@@ -1,6 +1,13 @@
 # Copied from 
 # https://github.com/spwhitt/cclabel
 # Array based union find data structure
+# 
+# This class does the union and find operations of a disjoint-set data structure
+# It is used as part of the component labeling algorithm which I copied from
+# https://github.com/spwhitt/cclabel
+#
+# I made no modifications to this file
+
 
 # P: The array, which encodes the set membership of all the elements
 
