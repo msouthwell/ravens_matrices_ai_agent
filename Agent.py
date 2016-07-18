@@ -29,13 +29,13 @@ DELETED_W = 10
 ADDED_W = 10
 FILLED_W = 3
 
-DB_LEVEL = "WARNING"
+DB_LEVEL = "INFO"
 
 # create logger
 logger = logging.getLogger('agent')
 logger.setLevel(DB_LEVEL)
 
-# create console handler and set level to WARNING
+# create console handler and set level
 ch = logging.StreamHandler()
 ch.setLevel(DB_LEVEL)
 
@@ -192,25 +192,6 @@ def object_unchanged(a, b, tol=TOLERANCE):
     else:
         return -1
 
-#### Old object_unchanged
-# def object_unchanged(a, b, tol=TOLERANCE):
-#     diff = difference(a.pixels, b.pixels)
-#     # logger.debug("Original Diff is " + str(a.name) + " " + str(b.name) + " difference is " + str(diff))
-#     rolls = [np.roll(a.pixels, 1, 0), np.roll(a.pixels, -1, 0), np.roll(a.pixels, 1, 1), np.roll(a.pixels, -1, 1)]
-
-#     diffs = [difference(i, b.pixels) for i in rolls ]
-
-#     for i in diffs:
-#         if i < diff and i < tol:
-#             logger.debug("Original Diff: " + str(diff) + " Post Roll diff: " + str(i))
-#             diff = i  
-#     if diff <= tol:
-#         if diff > 0.10:
-#             logger.warning("Shapes the same with difference: " + str(diff))
-#         return "UNCHANGED"
-#     else:
-#         return -1
-
 def object_rotated(a, b):
     c = copy.copy(a)
     pre_diff = difference(a,b)
@@ -223,20 +204,6 @@ def object_rotated(a, b):
             else:
                 return str("ROTATED_" + str(i *90))
     return -1
-
-###### Semantic net old object rotated code
-# def object_rotated(a, b):
-#     c = copy.copy(a)
-#     for i in range(1,4):
-#         c.pixels = np.rot90(c.pixels)
-#         unchanged = object_unchanged(c, b)      
-#         if unchanged == "UNCHANGED":
-#             if i == 3:
-#                 return str("ROTATED_90") 
-#             else:
-#                 return str("ROTATED_" + str(i *90))
-#     return -1
-
 
 ######################################################################
 #####    FRAME CLASS
@@ -254,6 +221,8 @@ class Frame:
         self.simple_transform = self.check_simple_transform()
         self.nodes = self.get_nodes()
         self.nodedifference = self.get_node_difference()
+        self.blackratio = self.get_black_ratio()
+        self.transformable = self.is_transformable()
 
     def get_black_difference(self):
         diff = []
@@ -262,6 +231,23 @@ class Frame:
             diff.append(difference(self.images[1], self.images[2]))
             diff.append(difference(self.images[0], self.images[2]))
         return diff
+
+    def get_black_ratio(self):
+        ratio = []
+        ratio.append(np.sum(self.images[0]) / np.sum(self.images[1]))
+        if len(self.images) > 2:
+            ratio.append(np.sum(self.images[1]) / np.sum(self.images[2]))
+            ratio.append(np.sum(self.images[0]) / np.sum(self.images[2]))
+        return ratio
+
+    def is_transformable(self):
+        transformable = []
+        for i in range(len(self.blackratio)):
+            if 0.95 < self.blackratio[i] < 1.05 and self.nodedifference[i] == 0:
+                transformable.append(True)
+            else:
+                transformable.append(False)
+        return transformable
 
     def get_node_difference(self):
         diff = []
@@ -293,6 +279,8 @@ class Frame:
         for i in self.figures:
             print("    " + str(i.name))
         print("Black Difference: " + str(self.blackdifference))
+        print("Black Ratio: " + str(self.blackratio))
+        print("Transformable: " + str(self.transformable))
         print("Number of Nodes: " + str([len(i) for i in self.nodes]))
         print("Nodes Changed by " + str(self.nodedifference))
         print("Simple Transforms: " + str(self.simple_transform))
@@ -452,98 +440,6 @@ class Agent:
 
         return net
 
-    def solve_two(self, problem):
-        p = problem
-        logger.info("####### Solving 2x2: " + str(p.name))
-
-        answer = -1
-        confidence = [0, 0, 0, 0, 0, 0]
-
-
-        letters = ["A", "B", "C"]
-        numbers = [1, 2, 3, 4, 5, 6]
-
-        problem.frames = {}
-        problem.frames["A" + "B"] = Frame([problem.figures["A"], problem.figures["B"]])
-
-        problem.frames["A" + "C"] = Frame([problem.figures["A"], problem.figures["C"]])
-
-        for i in numbers:
-            problem.frames["B" + str(i)] = Frame([problem.figures["B"], problem.figures[str(i)]])
-            problem.frames["C" + str(i)] = Frame([problem.figures["C"], problem.figures[str(i)]])
-
-        # for frame in problem.frames:
-        #     problem.frames[frame].print_frame()
-
-
-        for i in numbers:
-            confidence[i-1] += self.compare_frames(problem.frames["AB"], problem.frames["C" + str(i)])
-            confidence[i-1] += self.compare_frames(problem.frames["AC"], problem.frames["B" + str(i)])
-
-        logger.debug("Confidence is " + str(confidence))
-        s_conf = copy.copy(confidence)
-        s_conf.sort()
-        if abs(s_conf[5] - s_conf[4]) > 0:
-            answer = confidence.index(max(confidence)) + 1
-        else:
-            answer = -1
-            logger.warning("Skipping Question, unconfident")
-        return answer
-
-        # # Get transformation from A to B
-
-        # p.horz_relation = self.generate_semantic_net(p.figures["A"], p.figures["B"])
-        # p.horz_relation_size_diff = len(p.figures["A"].frame["Nodes"]) - len(p.figures["B"].frame["Nodes"])
-
-        # p.vert_relation = self.generate_semantic_net(p.figures["A"], p.figures["C"])
-        # p.vert_relation_size_diff = len(p.figures["A"].frame["Nodes"]) - len(p.figures["C"].frame["Nodes"])
-
-        # p.horz_relation.sort()
-        # p.vert_relation.sort()
-
-        # if p.horz_relation == -1 and p.vert_relation == -1:
-        #     logger.warning("Semantic Net Failed")
-
-        # logger.info("Horizontal: " + str(p.horz_relation))
-        # logger.info("Vertical:   " + str(p.vert_relation))
-
-        # for i in range(1,7):
-        #     if self.match_nodes(p.figures["C"], p.figures[str(i)]) != -1:
-        #         p.semantic_net["C", str(i)] = [i.transform for i in p.figures["C"].frame["Nodes"]]
-        #     if  self.match_nodes(p.figures["B"], p.figures[str(i)]) != -1:
-        #         p.semantic_net["B", str(i)] = [i.transform for i in p.figures["B"].frame["Nodes"]]
-        #     self.reset_frame_nodes(p.figures["B"].frame["Nodes"])
-        #     self.reset_frame_nodes(p.figures["C"].frame["Nodes"])
-        #     self.reset_frame_nodes(p.figures[str(i)].frame["Nodes"])
-
-        # # for net in p.semantic_net:
-        # #     p.semantic_net[net].sort()
-        # #     print(str(net) + "  : " + str(p.semantic_net[net]))
-
-        # for i in range(1,7):
-
-        #     if p.semantic_net["C", str(i)] == p.horz_relation and p.vert_relation == p.semantic_net["B", str(i)]:
-        #         answer = i
-        #         p.confidence = 0
-
-        #     elif p.semantic_net["C", str(i)] == p.horz_relation:
-        #         if p.confidence > 10:
-        #             answer = i
-        #             p.confidence = 10
-
-        #     elif p.semantic_net["B", str(i)] == p.vert_relation:
-        #         if p.confidence > 20:
-        #             answer = i
-        #             p.confidence = 10
-        #     elif (len(p.figures["C"].frame["Nodes"]) - len(p.figures[str(i)].frame["Nodes"])) == p.horz_relation_size_diff:
-        #         if p.confidence > 30:
-        #             answer = i
-        #     elif (len(p.figures["B"].frame["Nodes"]) - len(p.figures[str(i)].frame["Nodes"])) == p.vert_relation_size_diff:
-        #         if p.confidence > 30:
-        #             answer = i
-
-        return int(answer)
-
     def compare_frames(self, fr_1, fr_2):
         confidence = 1
 
@@ -574,13 +470,49 @@ class Agent:
 
         return confidence
 
-    def solve_three(self, problem):
+    def solve_two(self, problem):
+        p = problem
 
-        logger.info("######### Solving 3x3: " + str(problem.name))
+        answer = -1
+        confidence = [0, 0, 0, 0, 0, 0]
+
+
+        letters = ["A", "B", "C"]
+        numbers = [1, 2, 3, 4, 5, 6]
+
+        problem.frames = {}
+        problem.frames["A" + "B"] = Frame([problem.figures["A"], problem.figures["B"]])
+
+        problem.frames["A" + "C"] = Frame([problem.figures["A"], problem.figures["C"]])
+
+        for i in numbers:
+            problem.frames["B" + str(i)] = Frame([problem.figures["B"], problem.figures[str(i)]])
+            problem.frames["C" + str(i)] = Frame([problem.figures["C"], problem.figures[str(i)]])
+
+        if DB_LEVEL == "DEBUG":
+            for frame in problem.frames:
+                problem.frames[frame].print_frame()
+
+
+        for i in numbers:
+            confidence[i-1] += self.compare_frames(problem.frames["AB"], problem.frames["C" + str(i)])
+            confidence[i-1] += self.compare_frames(problem.frames["AC"], problem.frames["B" + str(i)])
+
+        logger.debug("Confidence is " + str(confidence))
+        s_conf = copy.copy(confidence)
+        s_conf.sort()
+        if abs(s_conf[5] - s_conf[4]) > 0:
+            answer = confidence.index(max(confidence)) + 1
+        else:
+            answer = -1
+            logger.warning("Skipping Question, unconfident")
+        return answer
+
+    def solve_three(self, problem):
 
         letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
         numbers = [1, 2, 3, 4, 5, 6, 7, 8]
-        confidence = [0, 0, 0, 0, 0, 0, 0, 0]
+        confidence = [0, 0, 0, 0, 0, 0, 0, 0]   # TODO make this a dictionary
 
         problem.frames = {}
 
@@ -628,23 +560,6 @@ class Agent:
             answer = confidence2.index(max(confidence2)) + 1
             logger.info("Confidence2 is " + str(confidence2))
 
-
-
-
-        # s_conf = copy.copy(confidence)
-        # m1 = max(confidence)
-        # i1 = confidence.index(m1)
-        # s_conf.remove(m1) 
-        # m2 = max(s_conf)
-        # i2 = confidence.index(m2)
-        # if abs(m1 - m2) > 0:
-        #     answer = confidence.index(max(confidence)) + 1
-        # else:
-        #     if random() > 0.5:
-        #         answer = i2 + 1
-        #     else:
-        #         answer = i1 + 1
-        #     logger.warning("Guessing Question, unconfident")
         return answer
 
     # The primary method for solving incoming Raven's Progressive Matrices.
@@ -660,12 +575,8 @@ class Agent:
 
 
         t0 = time()
-        # # add properties to the problem object
+        logger.info("**********Solving Problem : " + str(problem.name) + " ***********************")
 
-        # problem.horz_relation = []  # TODO: is an array the best way to represent this
-        # problem.vert_relation = []
-        # problem.semantic_net = {}
-        # problem.confidence = 999 # TODO: Implement a confidence level if needed?
         problem.answer = -1
 
         self.create_nodes(problem.figures)
@@ -673,7 +584,7 @@ class Agent:
         problem.answer = self.solve_two(problem) if problem.problemType == "2x2" else self.solve_three(problem)
 
         t1 = time()
-        logger.debug("Time is : %f" % (t1-t0));
+        logger.info("Time is : %f" % (t1-t0));
         logger.info("Answer is : " + str(problem.answer))
 
         return problem.answer
