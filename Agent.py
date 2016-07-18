@@ -474,7 +474,7 @@ class Agent:
         p = problem
 
         answer = -1
-        confidence = [0, 0, 0, 0, 0, 0]
+        confidence = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
 
 
         letters = ["A", "B", "C"]
@@ -495,17 +495,17 @@ class Agent:
 
 
         for i in numbers:
-            confidence[i-1] += self.compare_frames(problem.frames["AB"], problem.frames["C" + str(i)])
-            confidence[i-1] += self.compare_frames(problem.frames["AC"], problem.frames["B" + str(i)])
+            confidence{i} += self.compare_frames(problem.frames["AB"], problem.frames["C" + str(i)])
+            confidence{i} += self.compare_frames(problem.frames["AC"], problem.frames["B" + str(i)])
 
         logger.debug("Confidence is " + str(confidence))
-        s_conf = copy.copy(confidence)
-        s_conf.sort()
-        if abs(s_conf[5] - s_conf[4]) > 0:
-            answer = confidence.index(max(confidence)) + 1
-        else:
-            answer = -1
-            logger.warning("Skipping Question, unconfident")
+        # s_conf = copy.copy(confidence)
+        # s_conf.sort()
+        # if abs(s_conf[5] - s_conf[4]) > 0:
+        #     answer = confidence.index(max(confidence)) + 1
+        # else:
+        #     answer = -1
+        #     logger.warning("Skipping Question, unconfident")
         return answer
 
     def solve_three(self, problem):
