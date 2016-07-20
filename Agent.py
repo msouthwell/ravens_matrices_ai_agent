@@ -218,11 +218,12 @@ class Frame:
         for i in self.figures:
             self.images.append(i.frame["Image"])
         self.blackdifference = self.get_black_difference()
-        self.simple_transform = self.check_simple_transform()
         self.nodes = self.get_nodes()
         self.nodedifference = self.get_node_difference()
         self.blackratio = self.get_black_ratio()
         self.transformable = self.is_transformable()
+        self.simple_transform = self.check_simple_transform()
+
 
     def get_black_difference(self):
         diff = []
@@ -264,18 +265,26 @@ class Frame:
         return diff
 
     def check_simple_transform(self):
-        simple = []
-        if len(self.figures) == 3:
-            simple = [-1, -1, -1]
-            for i in range(3):
+        length = len(self.transformable)
+        simple = [-1, -1, -1] if length == 3 else [-1, -1]
+        if length == 2:
+            if self.transformable[0]:
+                if simple[0] == -1:
+                    simple[0] = object_flipud(self.images[0], self.images[1])
+                if simple[0] == -1:
+                    simple[0] = object_fliplr(self.images[0], self.images[1])
+                if simple[0] == -1:
+                    simple[0] = object_rotated(self.images[0], self.images[1]) 
+            return simple
+
+        for i in range(len(simple)):
+            if self.transformable[i]:
                 if simple[i] == -1:
-                    simple[i] = object_unchanged(self.images[i], self.images[(i+1)%3])
+                    simple[i] = object_flipud(self.images[i], self.images[(i+1)%length])
                 if simple[i] == -1:
-                    simple[i] = object_flipud(self.images[i], self.images[(i+1)%3])
+                    simple[i] = object_fliplr(self.images[i], self.images[(i+1)%length])
                 if simple[i] == -1:
-                    simple[i] = object_fliplr(self.images[i], self.images[(i+1)%3])
-                if simple[i] == -1:
-                    simple[i] = object_rotated(self.images[i], self.images[(i+1)%3])
+                    simple[i] = object_rotated(self.images[i], self.images[(i+1)%length]) 
 
         return simple
 
@@ -449,31 +458,59 @@ class Agent:
     def compare_frames(self, fr_1, fr_2):
         confidence = 1
 
+
         # Compare black difference
         for i, j in zip(fr_1.blackdifference, fr_2.blackdifference):
             if i == j:
-                confidence += 10
-            elif abs(i - j) < 0.1:
                 confidence += 5
+            elif abs(i - j) < 0.1:
+                confidence += 3
             elif abs(i - j) < 0.25:
-                confidence += 2
+                confidence += 1
 
         # Compare number of nodes
         for (i, j) in zip(fr_1.nodedifference, fr_2.nodedifference):
             if i != j:
-                confidence -= 5
+                confidence -= 0
             elif i == j and i != 0:
-                confidence += 10
-            else:
                 confidence += 5
+            else:
+                confidence += 0
 
         # Compare simple transforms
         for (i, j) in zip(fr_1.simple_transform, fr_2.simple_transform):
             if i != j:
-                confidence -= 5
+                confidence -= 0
             elif i == j and i != -1:
-                confidence += 10
+                confidence += 5
 
+        #### BEST Yet        
+        # # Compare black difference
+        # for i, j in zip(fr_1.blackdifference, fr_2.blackdifference):
+        #     if i == j:
+        #         confidence += 10
+        #     elif abs(i - j) < 0.1:
+        #         confidence += 5
+        #     elif abs(i - j) < 0.25:
+        #         confidence += 2
+
+        # # Compare number of nodes
+        # for (i, j) in zip(fr_1.nodedifference, fr_2.nodedifference):
+        #     if i != j:
+        #         confidence -= 5
+        #     elif i == j and i != 0:
+        #         confidence += 10
+        #     else:
+        #         confidence += 5
+
+        # # Compare simple transforms
+        # for (i, j) in zip(fr_1.simple_transform, fr_2.simple_transform):
+        #     if i != j:
+        #         confidence -= 5
+        #     elif i == j and i != -1:
+        #         confidence += 10
+
+        ##### Project 2
         #         # Compare black difference
         # for i, j in zip(fr_1.blackdifference, fr_2.blackdifference):
         #     if i == j:
@@ -550,7 +587,7 @@ class Agent:
         letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
         numbers = [1, 2, 3, 4, 5, 6, 7, 8]
         confidence = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}  
-        answer = -1
+        answer = 1
 
         problem.frames = {}
 
@@ -581,6 +618,7 @@ class Agent:
 
         # if max(confidence) >10:
         #             conf = confidence[1]
+
         conf = confidence[1]
 
         for key in confidence:
@@ -595,22 +633,7 @@ class Agent:
             problem.frames["ADG"].print_frame()
             problem.frames["BEH"].print_frame()
             problem.frames["CF" + str(answer)].print_frame()
-        # else:
-        #     logger.info("Trying new confidence")
-        #     confidence2 = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
-        #     # Diagonal frames
-        #     problem.frames["B" + "F" + "G"] = Frame([problem.figures["B"], problem.figures["F"], problem.figures["G"]])
-        #     problem.frames["C" + "D" + "H"] = Frame([problem.figures["C"], problem.figures["D"], problem.figures["H"]])
 
-        #     for i in numbers:
-        #         problem.frames["A" + "E" + str(i)] = Frame([problem.figures["A"], problem.figures["D"], problem.figures[str(i)]])
-
-        #     for i in numbers:
-        #         confidence2[i] += self.compare_frames(problem.frames["BFG"], problem.frames["AE" + str(i)])
-        #         confidence2[i] += self.compare_frames(problem.frames["CDH"], problem.frames["AE" + str(i)])
-
-        #     answer = confidence2.index(max(confidence2)) + 1
-        #     logger.info("Confidence2 is " + str(confidence2))
 
         return answer
 
