@@ -29,7 +29,7 @@ DELETED_W = 10
 ADDED_W = 10
 FILLED_W = 3
 
-DB_LEVEL = "INFO"
+DB_LEVEL = "WARNING"
 
 # create logger
 logger = logging.getLogger('agent')
@@ -234,10 +234,16 @@ class Frame:
 
     def get_black_ratio(self):
         ratio = []
-        ratio.append(np.sum(self.images[0]) / np.sum(self.images[1]))
-        if len(self.images) > 2:
+        if np.sum(self.images[1]) == 0:
+            ratio.append(np.sum(self.images[0]))
+        else:
+            ratio.append(np.sum(self.images[0]) / np.sum(self.images[1]))
+        if len(self.images) > 2 and np.sum(self.images[2]) != 0:
             ratio.append(np.sum(self.images[1]) / np.sum(self.images[2]))
             ratio.append(np.sum(self.images[0]) / np.sum(self.images[2]))
+        else:
+            ratio.append(np.sum(self.images[1]))
+            ratio.append(np.sum(self.images[0]))
         return ratio
 
     def is_transformable(self):
@@ -468,12 +474,37 @@ class Agent:
             elif i == j and i != -1:
                 confidence += 10
 
+        #         # Compare black difference
+        # for i, j in zip(fr_1.blackdifference, fr_2.blackdifference):
+        #     if i == j:
+        #         confidence += 5
+        #     elif abs(i - j) < 0.1:
+        #         confidence += 2
+        #     elif abs(i - j) < 0.25:
+        #         confidence += 1
+
+        # # Compare number of nodes
+        # for (i, j) in zip(fr_1.nodedifference, fr_2.nodedifference):
+        #     if i != j:
+        #         confidence -= 5
+        #     elif i == j and i != 0:
+        #         confidence += 10
+        #     else:
+        #         confidence += 5
+
+        # # Compare simple transforms
+        # for (i, j) in zip(fr_1.simple_transform, fr_2.simple_transform):
+        #     if i != j:
+        #         confidence -= 20
+        #     elif i == j and i != -1:
+        #         confidence +=40
+
         return confidence
 
     def solve_two(self, problem):
         p = problem
 
-        answer = -1
+        answer = 1
         confidence = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
 
 
@@ -495,24 +526,31 @@ class Agent:
 
 
         for i in numbers:
-            confidence{i} += self.compare_frames(problem.frames["AB"], problem.frames["C" + str(i)])
-            confidence{i} += self.compare_frames(problem.frames["AC"], problem.frames["B" + str(i)])
+            confidence[i] += self.compare_frames(problem.frames["AB"], problem.frames["C" + str(i)])
+            confidence[i] += self.compare_frames(problem.frames["AC"], problem.frames["B" + str(i)])
 
         logger.debug("Confidence is " + str(confidence))
-        # s_conf = copy.copy(confidence)
-        # s_conf.sort()
-        # if abs(s_conf[5] - s_conf[4]) > 0:
-        #     answer = confidence.index(max(confidence)) + 1
-        # else:
-        #     answer = -1
-        #     logger.warning("Skipping Question, unconfident")
+
+        conf = confidence[1]
+        for key in confidence:
+            if confidence[key] > conf:
+                answer = key
+                conf = confidence[key]
+
+        if DB_LEVEL == "DEBUG" or DB_LEVEL == "INFO":
+            problem.frames["AB"].print_frame()
+            problem.frames["C" + str(answer)].print_frame()
+            problem.frames["AC"].print_frame()
+            problem.frames["B" + str(answer)].print_frame()
+
         return answer
 
     def solve_three(self, problem):
 
         letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
         numbers = [1, 2, 3, 4, 5, 6, 7, 8]
-        confidence = [0, 0, 0, 0, 0, 0, 0, 0]   # TODO make this a dictionary
+        confidence = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}  
+        answer = -1
 
         problem.frames = {}
 
@@ -533,32 +571,46 @@ class Agent:
                 problem.frames[frame].print_frame()
 
         for i in numbers:
-            confidence[i-1] += self.compare_frames(problem.frames["ABC"], problem.frames["GH" + str(i)])
-            confidence[i-1] += self.compare_frames(problem.frames["DEF"], problem.frames["GH" + str(i)])
-            confidence[i-1] += self.compare_frames(problem.frames["ADG"], problem.frames["CF" + str(i)])
-            confidence[i-1] += self.compare_frames(problem.frames["BEH"], problem.frames["CF" + str(i)])
+            confidence[i] += self.compare_frames(problem.frames["ABC"], problem.frames["GH" + str(i)])
+            confidence[i] += self.compare_frames(problem.frames["DEF"], problem.frames["GH" + str(i)])
+            confidence[i] += self.compare_frames(problem.frames["ADG"], problem.frames["CF" + str(i)])
+            confidence[i] += self.compare_frames(problem.frames["BEH"], problem.frames["CF" + str(i)])
 
 
         logger.info("Confidence is " + str(confidence))
 
-        if max(confidence) >10:
-            answer = confidence.index(max(confidence)) + 1
-        else:
-            logger.info("Trying new confidence")
-            confidence2 = [0, 0, 0, 0, 0, 0, 0, 0]
-            # Diagonal frames
-            problem.frames["B" + "F" + "G"] = Frame([problem.figures["B"], problem.figures["F"], problem.figures["G"]])
-            problem.frames["C" + "D" + "H"] = Frame([problem.figures["C"], problem.figures["D"], problem.figures["H"]])
+        # if max(confidence) >10:
+        #             conf = confidence[1]
+        conf = confidence[1]
 
-            for i in numbers:
-                problem.frames["A" + "E" + str(i)] = Frame([problem.figures["A"], problem.figures["D"], problem.figures[str(i)]])
+        for key in confidence:
+            if confidence[key] > conf:
+                answer = key
+                conf = confidence[key]
 
-            for i in numbers:
-                confidence2[i-1] += self.compare_frames(problem.frames["BFG"], problem.frames["AE" + str(i)])
-                confidence2[i-1] += self.compare_frames(problem.frames["CDH"], problem.frames["AE" + str(i)])
+        if DB_LEVEL == "DEBUG" or DB_LEVEL == "INFO":
+            problem.frames["ABC"].print_frame()
+            problem.frames["DEF"].print_frame()
+            problem.frames["GH" + str(answer)].print_frame()
+            problem.frames["ADG"].print_frame()
+            problem.frames["BEH"].print_frame()
+            problem.frames["CF" + str(answer)].print_frame()
+        # else:
+        #     logger.info("Trying new confidence")
+        #     confidence2 = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
+        #     # Diagonal frames
+        #     problem.frames["B" + "F" + "G"] = Frame([problem.figures["B"], problem.figures["F"], problem.figures["G"]])
+        #     problem.frames["C" + "D" + "H"] = Frame([problem.figures["C"], problem.figures["D"], problem.figures["H"]])
 
-            answer = confidence2.index(max(confidence2)) + 1
-            logger.info("Confidence2 is " + str(confidence2))
+        #     for i in numbers:
+        #         problem.frames["A" + "E" + str(i)] = Frame([problem.figures["A"], problem.figures["D"], problem.figures[str(i)]])
+
+        #     for i in numbers:
+        #         confidence2[i] += self.compare_frames(problem.frames["BFG"], problem.frames["AE" + str(i)])
+        #         confidence2[i] += self.compare_frames(problem.frames["CDH"], problem.frames["AE" + str(i)])
+
+        #     answer = confidence2.index(max(confidence2)) + 1
+        #     logger.info("Confidence2 is " + str(confidence2))
 
         return answer
 
@@ -576,8 +628,6 @@ class Agent:
 
         t0 = time()
         logger.info("**********Solving Problem : " + str(problem.name) + " ***********************")
-
-        problem.answer = -1
 
         self.create_nodes(problem.figures)
 
