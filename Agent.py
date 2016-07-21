@@ -325,6 +325,7 @@ class Node:
         self.transform = 'not matched'
         self.match_weight = 0
 
+
 ######################################################################
 #####    MAIN AGENT
 #####
@@ -335,7 +336,7 @@ class Agent:
     # processing necessary before your Agent starts solving problems here.
     #
     # Do not add any variables to this signature; they will not be used by
-    # main().
+    # main()
     def __init__(self):
         pass
 
@@ -349,7 +350,14 @@ class Agent:
             array = to_image_array(this_figure.visualFilename)
 
             this_figure.frame["Image"] = color_shapes(array)
+
+            # inv_array = np.zeros(array.shape)
+            # inv_array[np.where(array == 0)] = 1
+
             this_figure.frame["Nodes"] = []
+
+            # this_figure.frame["Inverse"] = color_shapes(inv_array)
+            # this_figure.frame["Whites"] = []
 
             # Seperate each shape into its own object
             for i in range(1, int(np.amax(this_figure.frame["Image"])) + 1):
@@ -368,6 +376,23 @@ class Agent:
                     # test_image = Image.fromarray(tmp)
                     # test_image.show()
             # logger.debug("Figure " + str(figure_name) + " has " + str(len(this_figure.frame["Nodes"])) + " nodes")
+
+            # # Seperate all white areas into own obj
+            # for i in range(1, int(np.amax(this_figure.frame["Inverse"])) + 1):
+            #     pixels = np.zeros(this_figure.frame["Inverse"].shape)
+
+            #     # pixels[np.where(this_figure.frame["Inverse"] == i)] = 1
+
+            #     if np.sum(pixels) <= 30: 
+            #         if np.sum(pixels) > 0:
+            #             logger.warning("Found white area with " + str(np.sum(pixels)) + "pixels, passed")
+            #         pass
+            #     else:
+            #         # white = Node(pixels, "none", "not matched", 0, "Node_" + str(i))
+            #         this_figure.frame["Whites"].append(1)
+            #         # test_image = Image.fromarray(tmp)
+            #         # test_image.show()
+            # print("Figure " + str(figure_name) + " has " + str(len(this_figure.frame["Whites"])) + " whites")
 
             # Set uncolor component images
             this_figure.frame["Image"][np.where(this_figure.frame["Image"] > 1)] = IMAGE_INTENSITY
@@ -458,9 +483,17 @@ class Agent:
     def compare_frames(self, fr_1, fr_2):
         confidence = 1
 
-
         # Compare black difference
         for i, j in zip(fr_1.blackdifference, fr_2.blackdifference):
+            if i == j:
+                confidence += 5
+            elif abs(i - j) < 0.1:
+                confidence += 3
+            elif abs(i - j) < 0.25:
+                confidence += 1
+
+        # Compare black ratio
+        for i, j in zip(fr_1.blackratio, fr_2.blackratio):
             if i == j:
                 confidence += 5
             elif abs(i - j) < 0.1:
@@ -483,58 +516,6 @@ class Agent:
                 confidence -= 0
             elif i == j and i != -1:
                 confidence += 5
-
-        #### BEST Yet        
-        # # Compare black difference
-        # for i, j in zip(fr_1.blackdifference, fr_2.blackdifference):
-        #     if i == j:
-        #         confidence += 10
-        #     elif abs(i - j) < 0.1:
-        #         confidence += 5
-        #     elif abs(i - j) < 0.25:
-        #         confidence += 2
-
-        # # Compare number of nodes
-        # for (i, j) in zip(fr_1.nodedifference, fr_2.nodedifference):
-        #     if i != j:
-        #         confidence -= 5
-        #     elif i == j and i != 0:
-        #         confidence += 10
-        #     else:
-        #         confidence += 5
-
-        # # Compare simple transforms
-        # for (i, j) in zip(fr_1.simple_transform, fr_2.simple_transform):
-        #     if i != j:
-        #         confidence -= 5
-        #     elif i == j and i != -1:
-        #         confidence += 10
-
-        ##### Project 2
-        #         # Compare black difference
-        # for i, j in zip(fr_1.blackdifference, fr_2.blackdifference):
-        #     if i == j:
-        #         confidence += 5
-        #     elif abs(i - j) < 0.1:
-        #         confidence += 2
-        #     elif abs(i - j) < 0.25:
-        #         confidence += 1
-
-        # # Compare number of nodes
-        # for (i, j) in zip(fr_1.nodedifference, fr_2.nodedifference):
-        #     if i != j:
-        #         confidence -= 5
-        #     elif i == j and i != 0:
-        #         confidence += 10
-        #     else:
-        #         confidence += 5
-
-        # # Compare simple transforms
-        # for (i, j) in zip(fr_1.simple_transform, fr_2.simple_transform):
-        #     if i != j:
-        #         confidence -= 20
-        #     elif i == j and i != -1:
-        #         confidence +=40
 
         return confidence
 
@@ -579,6 +560,11 @@ class Agent:
             problem.frames["C" + str(answer)].print_frame()
             problem.frames["AC"].print_frame()
             problem.frames["B" + str(answer)].print_frame()
+
+        print(confidence)
+
+        if conf < 2:
+            answer = -1
 
         return answer
 
@@ -634,6 +620,10 @@ class Agent:
             problem.frames["BEH"].print_frame()
             problem.frames["CF" + str(answer)].print_frame()
 
+        print(confidence)
+
+        if conf < 7:
+            answer = -1
 
         return answer
 
@@ -650,7 +640,7 @@ class Agent:
 
 
         t0 = time()
-        logger.info("**********Solving Problem : " + str(problem.name) + " ***********************")
+        print("**********Solving Problem : " + str(problem.name) + " ***********************")
 
         self.create_nodes(problem.figures)
 
@@ -658,7 +648,7 @@ class Agent:
 
         t1 = time()
         logger.info("Time is : %f" % (t1-t0));
-        logger.info("Answer is : " + str(problem.answer))
+        print("Answer is : " + str(problem.answer))
 
         return problem.answer
 
