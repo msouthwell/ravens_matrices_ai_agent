@@ -2,7 +2,7 @@
 
 This project was developed for the Knowledge-Based Artificial Intelligence course as Georgia Tech.  The purpose was to design an artificial intelligence agent that was capable of solving the RPM intelligence test.  The RPM intelligence test is a test comprised of a 3 x 3 matrix of images.  Based on the relationship between the figures, a person (or agent) needs to determine which image best completes the matrix.
 
-![RPM Example] (Problems/Challenge Problems E/Challenge Problem E-07)
+![RPM Example] (Problems/Challenge Problems E/Challenge Problem E-07/Challenge Problem E-07.PNG)
 
 For this project I was restricted from using any third-party image processing libraries (ie. no OpenCV), thus my agent relied on basic image transformations and pixel analysis.
 
