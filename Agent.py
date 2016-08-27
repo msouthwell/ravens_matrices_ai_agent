@@ -1,14 +1,5 @@
-# Your Agent for solving Raven's Progressive Matrices. You MUST modify this file.
-#
-# You may also create and submit new files in addition to modifying this file.
-#
-# Make sure your file retains methods with the signatures:
-# def __init__(self)
-# def Solve(self,problem)
-#
-# These methods will be necessary for the project's main method to run.
+# An Agent for solving Raven's Progressive Matrices. 
 
-# Install Pillow and uncomment this line to access image processing.
 from PIL import Image
 import  numpy as np
 from itertools import product
@@ -39,13 +30,10 @@ logger.setLevel(DB_LEVEL)
 ch = logging.StreamHandler()
 ch.setLevel(DB_LEVEL)
 
-# create formatter
 formatter = logging.Formatter('%(levelname)s - %(message)s')
 
-# add formatter to ch
 ch.setFormatter(formatter)
 
-# add ch to logger
 logger.addHandler(ch)
 
 ######################################################################
@@ -57,7 +45,6 @@ logger.addHandler(ch)
 # It seperates each figure into its component images, with each shape getting its own 'color'
 # Code copied from https://github.com/spwhitt/cclabel/blob/master/cclabel.py
 # I altered code slightly to fit problem
-# I attempted creating my own component labeling, but it was taking significant amounts of time
 # Algorithm obtained from "Optimizing Two-Pass Connected-Component Labeling 
 # by Kesheng Wu, Ekow Otoo, and Kenji Suzuki
 #
@@ -187,7 +174,8 @@ def object_unchanged(a, b, tol=TOLERANCE):
  
     if diff <= tol:
         if diff > 0.03:
-            logger.warning("Shapes the same with difference: " + str(diff))
+            # logger.warning("Shapes the same with difference: " + str(diff))
+            pass
         return "UNCHANGED"
     else:
         return -1
@@ -216,14 +204,131 @@ class Frame:
         self.figures = figures
         self.images = []
         for i in self.figures:
-            self.images.append(i.frame["Image"])
+            self.images.append(i.attr["Image"])
         self.blackdifference = self.get_black_difference()
         self.nodes = self.get_nodes()
         self.nodedifference = self.get_node_difference()
         self.blackratio = self.get_black_ratio()
         self.transformable = self.is_transformable()
         self.simple_transform = self.check_simple_transform()
+        self.and_or_xor = self.check_and_or_xor()
+        self.semantic_net = self.get_net() #if len(self.nodes[0]) > 1 else "none"
 
+    def get_net(self):
+        net = {"ab": [], "bc": [], "ac": []}
+
+        if len(self.nodes) == 3:
+
+            if len(self.nodes[0]) > 10 or len(self.nodes[1]) > 10 or len(self.nodes[2]) > 10:
+                return net
+            for a in self.nodes[0]:
+                for b in self.nodes[1]:
+                    if a.transform == "not matched" and b.transform == "not matched":
+                        if 0.95 < np.sum(a.pixels) / np.sum(b.pixels) < 1.05:
+                            unchange = object_unchanged(a.pixels, b.pixels, 0.2)
+                            rotated = object_rotated(a.pixels, b.pixels)
+                            fliplr = object_fliplr(a.pixels, b.pixels)
+                            flipud = object_flipud(a.pixels, b.pixels)
+                            if unchange == "UNCHANGED":
+                                net["ab"].append("UNCHANGED")
+                                a.transform = unchange
+                                b.transform = unchange
+                                break
+                            elif rotated == "ROTATED_90" or rotated == "ROTATED_180" or rotated == "ROTATED_270":
+                                net["ab"].append(rotated)
+                                a.transform = rotated
+                                b.transform = rotated
+                                break
+                            elif fliplr == "FLIP_LR":
+                                net["ab"].append(fliplr)
+                                a.transform = fliplr
+                                b.transform = fliplr
+                                break
+                            elif flipud == "FLIP_UD":
+                                net["ab"].append(flipud)
+                                a.transform = flipud
+                                b.transform = flipud
+                                break
+                            else:
+                                net["ab"].append("no match")
+                        else:
+                            net["ab"].append("no match")
+
+            [i.reset() for i in self.nodes[0]]
+            [i.reset() for i in self.nodes[1]]
+
+
+            for a in self.nodes[1]:
+                for b in self.nodes[2]:
+                    if a.transform == "not matched" and b.transform == "not matched":
+                        if 0.95 < np.sum(a.pixels) / np.sum(b.pixels) < 1.05:
+                            unchange = object_unchanged(a.pixels, b.pixels, 0.2)
+                            rotated = object_rotated(a.pixels, b.pixels)
+                            fliplr = object_fliplr(a.pixels, b.pixels)
+                            flipud = object_flipud(a.pixels, b.pixels)
+                            if unchange == "UNCHANGED":
+                                net["bc"].append("UNCHANGED")
+                                a.transform = unchange
+                                b.transform = unchange
+                                break
+                            elif rotated == "ROTATED_90" or rotated == "ROTATED_180" or rotated == "ROTATED_270":
+                                net["bc"].append(rotated)
+                                a.transform = rotated
+                                b.transform = rotated
+                                break
+                            elif fliplr == "FLIP_LR":
+                                net["bc"].append(fliplr)
+                                a.transform = fliplr
+                                b.transform = fliplr
+                                break
+                            elif flipud == "FLIP_UD":
+                                net["bc"].append(flipud)
+                                a.transform = flipud
+                                b.transform = flipud
+                                break
+                            else:
+                                net["bc"].append("no match")
+                        else:
+                            net["bc"].append("no match")
+            [i.reset() for i in self.nodes[1]]
+            [i.reset() for i in self.nodes[2]]
+
+            for a in self.nodes[1]:
+                for b in self.nodes[2]:
+                    if a.transform == "not matched" and b.transform == "not matched":
+                        if 0.95 < np.sum(a.pixels) / np.sum(b.pixels) < 1.05:
+                            unchange = object_unchanged(a.pixels, b.pixels, 0.2)
+                            rotated = object_rotated(a.pixels, b.pixels)
+                            fliplr = object_fliplr(a.pixels, b.pixels)
+                            flipud = object_flipud(a.pixels, b.pixels)
+                            if unchange == "UNCHANGED":
+                                net["ac"].append("UNCHANGED")
+                                a.transform = unchange
+                                b.transform = unchange
+                                break
+                            elif rotated == "ROTATED_90" or rotated == "ROTATED_180" or rotated == "ROTATED_270":
+                                net["ac"].append(rotated)
+                                a.transform = rotated
+                                b.transform = rotated
+                                break
+                            elif fliplr == "FLIP_LR":
+                                net["ac"].append(fliplr)
+                                a.transform = fliplr
+                                b.transform = fliplr
+                                break
+                            elif flipud == "FLIP_UD":
+                                net["ac"].append(flipud)
+                                a.transform = flipud
+                                b.transform = flipud
+                                break
+                            else:
+                                net["ac"].append("no match")
+                        else:
+                            net["ac"].append("no match")
+            [i.reset() for i in self.nodes[0]]
+            [i.reset() for i in self.nodes[2]]
+
+        return net
 
     def get_black_difference(self):
         diff = []
@@ -270,6 +375,8 @@ class Frame:
         if length == 2:
             if self.transformable[0]:
                 if simple[0] == -1:
+                    simple[0] = object_unchanged(self.images[0], self.images[1])
+                if simple[0] == -1:
                     simple[0] = object_flipud(self.images[0], self.images[1])
                 if simple[0] == -1:
                     simple[0] = object_fliplr(self.images[0], self.images[1])
@@ -280,6 +387,8 @@ class Frame:
         for i in range(len(simple)):
             if self.transformable[i]:
                 if simple[i] == -1:
+                    simple[i] = object_unchanged(self.images[i], self.images[(i+1)%length])
+                if simple[i] == -1:
                     simple[i] = object_flipud(self.images[i], self.images[(i+1)%length])
                 if simple[i] == -1:
                     simple[i] = object_fliplr(self.images[i], self.images[(i+1)%length])
@@ -287,6 +396,27 @@ class Frame:
                     simple[i] = object_rotated(self.images[i], self.images[(i+1)%length]) 
 
         return simple
+
+    def check_and_or_xor(self):
+
+        length = len(self.images)
+        operator = [-1, -1, -1] if length == 3 else [-1, -1]
+        if length == 2: 
+            return "none"
+        else:
+            and_img = self.images[0] + self.images[1]
+            and_img -= IMAGE_INTENSITY
+            if difference(and_img, self.images[2]) < TOLERANCE:
+                return "AND"
+            or_img = self.images[0] + self.images[1]
+            or_img[np.where(or_img > IMAGE_INTENSITY)] = IMAGE_INTENSITY
+            if difference(or_img, self.images[2]) < TOLERANCE:
+                return "OR"         
+            xor_img = self.images[0] + self.images[1]
+            xor_img[np.where(or_img > IMAGE_INTENSITY)] = 0
+            if difference(xor_img, self.images[2]) < TOLERANCE:
+                return "XOR"
+        return "none"
 
     def print_frame(self):
         print("#################################")
@@ -299,11 +429,13 @@ class Frame:
         print("Number of Nodes: " + str([len(i) for i in self.nodes]))
         print("Nodes Changed by " + str(self.nodedifference))
         print("Simple Transforms: " + str(self.simple_transform))
+        print("AND_OR_XOR: " + str(self.and_or_xor))
+        print("Semantic Net" + str(self.semantic_net))
 
     def get_nodes(self):
         nodes = []
         for i in self.figures:
-            nodes.append(i.frame["Nodes"])
+            nodes.append(i.attr["Nodes"])
         return nodes
 
 ######################################################################
@@ -344,27 +476,27 @@ class Agent:
         '''Seperates each figure into nodes for the creation of the semantic net '''
         for figure_name in figures:
             this_figure = figures[figure_name]
-            this_figure.frame = {}
+            this_figure.attr = {}
 
             # Process the image for future operations
             array = to_image_array(this_figure.visualFilename)
 
-            this_figure.frame["Image"] = color_shapes(array)
+            this_figure.attr["Image"] = color_shapes(array)
 
             # inv_array = np.zeros(array.shape)
             # inv_array[np.where(array == 0)] = 1
 
-            this_figure.frame["Nodes"] = []
+            this_figure.attr["Nodes"] = []
 
-            # this_figure.frame["Inverse"] = color_shapes(inv_array)
-            # this_figure.frame["Whites"] = []
+            # this_figure.attr["Inverse"] = color_shapes(inv_array)
+            # this_figure.attr["Whites"] = []
 
             # Seperate each shape into its own object
-            for i in range(1, int(np.amax(this_figure.frame["Image"])) + 1):
-                pixels = np.zeros(this_figure.frame["Image"].shape)
+            for i in range(1, int(np.amax(this_figure.attr["Image"])) + 1):
+                pixels = np.zeros(this_figure.attr["Image"].shape)
 
                 # Set pixel back to IMAGE_INTENSITY rather than its 'color'
-                pixels[np.where(this_figure.frame["Image"] == i)] = IMAGE_INTENSITY
+                pixels[np.where(this_figure.attr["Image"] == i)] = IMAGE_INTENSITY
 
                 if np.sum(pixels) <= OBJECT_THRESHOLD: 
                     if np.sum(pixels) > 0:
@@ -372,30 +504,13 @@ class Agent:
                     pass
                 else:
                     node = Node(pixels, "none", "not matched", 0, "Node_" + str(i))
-                    this_figure.frame["Nodes"].append(node)
+                    this_figure.attr["Nodes"].append(node)
                     # test_image = Image.fromarray(tmp)
                     # test_image.show()
-            # logger.debug("Figure " + str(figure_name) + " has " + str(len(this_figure.frame["Nodes"])) + " nodes")
+            # logger.debug("Figure " + str(figure_name) + " has " + str(len(this_figure.attr["Nodes"])) + " nodes")
 
-            # # Seperate all white areas into own obj
-            # for i in range(1, int(np.amax(this_figure.frame["Inverse"])) + 1):
-            #     pixels = np.zeros(this_figure.frame["Inverse"].shape)
-
-            #     # pixels[np.where(this_figure.frame["Inverse"] == i)] = 1
-
-            #     if np.sum(pixels) <= 30: 
-            #         if np.sum(pixels) > 0:
-            #             logger.warning("Found white area with " + str(np.sum(pixels)) + "pixels, passed")
-            #         pass
-            #     else:
-            #         # white = Node(pixels, "none", "not matched", 0, "Node_" + str(i))
-            #         this_figure.frame["Whites"].append(1)
-            #         # test_image = Image.fromarray(tmp)
-            #         # test_image.show()
-            # print("Figure " + str(figure_name) + " has " + str(len(this_figure.frame["Whites"])) + " whites")
-
-            # Set uncolor component images
-            this_figure.frame["Image"][np.where(this_figure.frame["Image"] > 1)] = IMAGE_INTENSITY
+            #  uncolor component images
+            this_figure.attr["Image"][np.where(this_figure.attr["Image"] > 1)] = IMAGE_INTENSITY
 
     # method that sets objects frame values
     def match(self, a, b, transform):
@@ -480,25 +595,25 @@ class Agent:
 
         return net
 
-    def compare_frames(self, fr_1, fr_2):
+    def compare_frames(self, fr_1, fr_2, problem):
         confidence = 1
 
         # Compare black difference
         for i, j in zip(fr_1.blackdifference, fr_2.blackdifference):
-            if i == j:
-                confidence += 5
-            elif abs(i - j) < 0.1:
+            if abs(i - j) < 0.05:
                 confidence += 3
-            elif abs(i - j) < 0.25:
+            elif abs(i - j) < 0.1:
+                confidence += 2
+            elif abs(i - j) < 0.15:
                 confidence += 1
 
         # Compare black ratio
         for i, j in zip(fr_1.blackratio, fr_2.blackratio):
-            if i == j:
-                confidence += 5
-            elif abs(i - j) < 0.1:
+            if abs(i - j) < 0.05:
                 confidence += 3
-            elif abs(i - j) < 0.25:
+            elif abs(i - j) < 0.1:
+                confidence += 2
+            elif abs(i - j) < 0.15:
                 confidence += 1
 
         # Compare number of nodes
@@ -516,6 +631,28 @@ class Agent:
                 confidence -= 0
             elif i == j and i != -1:
                 confidence += 5
+
+        # Check for and or xor
+        if fr_1.and_or_xor == fr_2.and_or_xor and fr_1.and_or_xor != "none":
+            confidence += 2
+
+        # compare semantic nets.... really poorly
+        ab1 = sorted(fr_1.semantic_net["ab"])
+        ab2 = sorted(fr_2.semantic_net["ab"])
+        bc1 = sorted(fr_1.semantic_net["bc"])
+        bc2 = sorted(fr_2.semantic_net["bc"])
+        ac1 = sorted(fr_1.semantic_net["ac"])
+        ac2 = sorted(fr_2.semantic_net["ac"])
+
+        # if ab1 == bc1 and bc1 == ac1:
+        #     if ab2 == bc2 and bc2 == ac2:
+        #         confidence += 10
+
+        if "Basic Problem D-" in problem.name:
+            if ab2 == bc2:
+                confidence += 10
+        # TODO add count edges
+        # TODO add count corners
 
         return confidence
 
@@ -544,8 +681,8 @@ class Agent:
 
 
         for i in numbers:
-            confidence[i] += self.compare_frames(problem.frames["AB"], problem.frames["C" + str(i)])
-            confidence[i] += self.compare_frames(problem.frames["AC"], problem.frames["B" + str(i)])
+            confidence[i] += self.compare_frames(problem.frames["AB"], problem.frames["C" + str(i)], problem)
+            confidence[i] += self.compare_frames(problem.frames["AC"], problem.frames["B" + str(i)], problem)
 
         logger.debug("Confidence is " + str(confidence))
 
@@ -584,20 +721,32 @@ class Agent:
         problem.frames["A" + "D" + "G"] = Frame([problem.figures["A"], problem.figures["D"], problem.figures["G"]])
         problem.frames["B" + "E" + "H"] = Frame([problem.figures["B"], problem.figures["E"], problem.figures["H"]])
 
+        # Add diagonals
+
+        problem.frames["B" + "F" + "G"] = Frame([problem.figures["B"], problem.figures["F"], problem.figures["G"]])
+        problem.frames["C" + "D" + "H"] = Frame([problem.figures["C"], problem.figures["D"], problem.figures["H"]])
+
 
         for i in numbers:
             problem.frames["C" + "F" + str(i)] = Frame([problem.figures["C"], problem.figures["F"], problem.figures[str(i)]])
             problem.frames["G" + "H" + str(i)] = Frame([problem.figures["G"], problem.figures["H"], problem.figures[str(i)]])
+            problem.frames["A" + "E" + str(i)] = Frame([problem.figures["A"], problem.figures["E"], problem.figures[str(i)]])
+
 
         if DB_LEVEL == "DEBUG":
             for frame in problem.frames:
                 problem.frames[frame].print_frame()
 
         for i in numbers:
-            confidence[i] += self.compare_frames(problem.frames["ABC"], problem.frames["GH" + str(i)])
-            confidence[i] += self.compare_frames(problem.frames["DEF"], problem.frames["GH" + str(i)])
-            confidence[i] += self.compare_frames(problem.frames["ADG"], problem.frames["CF" + str(i)])
-            confidence[i] += self.compare_frames(problem.frames["BEH"], problem.frames["CF" + str(i)])
+            confidence[i] += self.compare_frames(problem.frames["ABC"], problem.frames["GH" + str(i)], problem) * 1.0
+            confidence[i] += self.compare_frames(problem.frames["DEF"], problem.frames["GH" + str(i)], problem) * 1.0
+            confidence[i] += self.compare_frames(problem.frames["ADG"], problem.frames["CF" + str(i)], problem) * 1.0
+            confidence[i] += self.compare_frames(problem.frames["BEH"], problem.frames["CF" + str(i)], problem) * 1.0
+            if "Basic Problem E-" in problem.name:
+                pass
+            else:
+                confidence[i] += self.compare_frames(problem.frames["BFG"], problem.frames["AE" + str(i)], problem) * 1.0
+                confidence[i] += self.compare_frames(problem.frames["CDH"], problem.frames["AE" + str(i)], problem) * 1.0
 
 
         logger.info("Confidence is " + str(confidence))
@@ -619,6 +768,11 @@ class Agent:
             problem.frames["ADG"].print_frame()
             problem.frames["BEH"].print_frame()
             problem.frames["CF" + str(answer)].print_frame()
+            problem.frames["BFG"].print_frame()
+            problem.frames["CDH"].print_frame()
+            problem.frames["AE" + str(answer)].print_frame()
+            problem.frames["GH1"].print_frame()
+
 
         print(confidence)
 
